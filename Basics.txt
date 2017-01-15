@@ -1,0 +1,18 @@
+Lesson 1
+What is EDA?
+- Initial step before a very large process of predictive modelleling
+- Convert data in words to numbers, charts to understand it better
+
+Just looking at the numerical data doesnt give any idea as such about the data,but when we convert the data into some statistical charts like histogram, bar charts etc, the data starts making more sense and is easy to understand;  which is the major task of EDA
+
+Goals of EDA
+Goal 1
+understand a certain metric or relations between data points in the given data set
+
+Goal 2
+assess and validate the prediction on which the future inferences will be based
+
+Goal 3
+Which tools to use to show the data is also very important
+
+Tip: Look at data with Curiosity but also with Skepticism :)
