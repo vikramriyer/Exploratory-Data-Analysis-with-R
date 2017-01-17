@@ -16,3 +16,29 @@ Goal 3
 Which tools to use to show the data is also very important
 
 Tip: Look at data with Curiosity but also with Skepticism :)
+
+Power of R
+TPR FPR ROC AUC
+
+Receiving Operating Characteristic, or ROC, is a visual way for inspecting the performance of a binary classifier (0/1). In particular, it's comparing the rate at which your classifier is making correct predictions (True Positives or TP) and the rate at which your classifier is making false alarms (False Positives or FP)
+
+TPR = true positives/(true positives + false positives)
+FPR = false positives/(true positives + false positives)
+
+References:
+http://blog.yhat.com/posts/roc-curves.html
+
+Working with R
+demistifying.r
+
+setting up R
+setting up Rstudio
+
+setwd('/path/to/working/dir') => similar to cd
+getwd() => similar to pwd
+
+states <- read.csv("~/vikram-code-school/ND/P4/datasets/stateData.csv")
+head(states, 5) => top 5 rows
+subset(states, state.region == 1) => gets all the records where region == 1
+states[states$region == 1,] => this gets same result as above subset
+
