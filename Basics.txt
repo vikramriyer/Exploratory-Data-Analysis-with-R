@@ -17,7 +17,7 @@ Which tools to use to show the data is also very important
 
 Tip: Look at data with Curiosity but also with Skepticism :)
 
-Power of R
+Lesson 2
 TPR FPR ROC AUC
 
 Receiving Operating Characteristic, or ROC, is a visual way for inspecting the performance of a binary classifier (0/1). In particular, it's comparing the rate at which your classifier is making correct predictions (True Positives or TP) and the rate at which your classifier is making false alarms (False Positives or FP)
@@ -42,3 +42,38 @@ head(states, 5) => top 5 rows
 subset(states, state.region == 1) => gets all the records where region == 1
 states[states$region == 1,] => this gets same result as above subset
 
+
+list of all the cars that have mpg greater than or equal to 30 and hp < 60
+mtcars[mtcars$mpg >= 30 | mtcars$hp < 60, ]
+subset(mtcars, mpg >= 30 | hp < 60)
+
+ifelse:
+
+> mtcars$wt
+ [1] 2.620 2.875 2.320 3.215 3.440 3.460 3.570 3.190 3.150 3.440 3.440 4.070 3.730 3.780
+[15] 5.250 5.424 5.345 2.200 1.615 1.835 2.465 3.520 3.435 3.840 3.845 1.935 2.140 1.513
+[29] 3.170 2.770 3.570 2.780
+cond <- mtcars$wt < 3      => this will return a boolean, for the entire dataframe, wherever the wt is < 3 it will return true
+> cond
+ [1]  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[15] FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE
+[29] FALSE  TRUE FALSE  TRUE
+
+> mtcars$weight_class <- ifelse(cond, 'light', 'average') => weight class will be new column added, if condition is met (true), then 'light' will be set as the corresponding value of weight_class field in mtcars, 
+if not met (false), them 'average'
+> mtcars$weight_class
+ [1] "light"   "light"   "light"   "average" "average" "average" "average" "average"
+ [9] "average" "average" "average" "average" "average" "average" "average" "average"
+[17] "average" "light"   "light"   "light"   "light"   "average" "average" "average"
+[25] "average" "light"   "light"   "light"   "average" "light"   "average" "light"  
+
+> cond <- mtcars$wt > 3.5 
+> mtcars$weight_class <- ifelse(cond, 'heavy', mtcars$weight_class)
+> mtcars$weight_class
+ [1] "light"   "light"   "light"   "average" "average" "average" "heavy"   "average"
+ [9] "average" "average" "average" "heavy"   "heavy"   "heavy"   "heavy"   "heavy"  
+[17] "heavy"   "light"   "light"   "light"   "light"   "heavy"   "average" "heavy"  
+[25] "heavy"   "light"   "light"   "light"   "average" "light"   "heavy"   "light" 
+
+rm(cond)
+rm(any variable that is loaded into memory using R)
