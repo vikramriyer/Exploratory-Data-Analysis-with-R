@@ -1,0 +1,76 @@
+---
+title: "facebook_data"
+author: "vikram"
+date: "21 January 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+#analyzing facebook data v1
+```{r}
+facebook_data = read.csv("~/vikram-code-school/ND/P4/datasets/pseudo_facebook.tsv", sep = '\t')
+summary(facebook_data)
+qplot(data = facebook_data, x = dob_day) +
+  scale_x_continuous(breaks=1:31) +
+  facet_wrap(~ dob_month)
+```
+
+#analyzing facebook data v2
+```{r}
+pf = read.csv("~/vikram-code-school/ND/P4/datasets/pseudo_facebook.tsv", sep = '\t')
+```
+#plot friend_count
+```{r}
+qplot(data = pf, x = friend_count)
+```
+## the above code, will consider the outliers as it spans the entire data, but we can
+## see that the major chunk of data is till 1000, so we may want to scale up things
+
+# anyone of below works file
+# xlim accepts a factor, with a starting and ending position
+```{r}
+qplot(data = pf, x = friend_count, xlim = c(0, 1000))
+qplot(data = pf, x = friend_count) +
+  scale_x_continuous(limits = c(0,1000))
+```
+
+# working with binwidth
+```{r}
+qplot(data = pf, x = friend_count, binwidth = 25) +
+  scale_x_continuous(limits = c(0,1000), breaks = seq(0, 1000, 50))
+```
+
+# split the plot into male and female to see who has the max number of friends
+```{r}
+qplot(data = pf, x = friend_count) +
+  scale_x_continuous(limits = c(0, 1000), breaks = seq(0, 1000, 50)) +
+  facet_grid(. ~ gender)
+```
+## We see a new var called NA, which means people who were not registered with with either male of female, lets remove that
+```{r}
+qplot(x = friend_count, data = subset(pf, !is.na(gender))) +
+  scale_x_continuous(limits = c(0, 1000), breaks = seq(0, 1000, 50)) +
+  facet_grid(. ~ gender)
+```
+## Done :)
+## There is another function we could have used to omit na.
+## data = na.omit(pf) could have also done the trick, however, all the NA's from the entire of ## dataset would be removed in that case, so if some one had 0 friends and that was not
+## mapped, then that would be removed as well
+
+# Count of female and male
+```{r}
+table(pf$gender)
+```
+
+# Stats by gender
+```{r}
+by(pf$friend_count, pf$gender, summary)
+```
+
+# References
+# Facets: http://www.cookbook-r.com/Graphs/Facets_(ggplot2)/
+# Scales: http://docs.ggplot2.org/current/scale_continuous.html
