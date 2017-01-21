@@ -93,7 +93,33 @@ Vectors
 > vector1[c(1)]
 [1] 1
 
-* need to find the distinction between the above 2
+> c(1:5)
+[1] 1 2 3 4 5
+> c(1:5,9:15)
+ [1]  1  2  3  4  5  9 10 11 12 13 14 15
+> c(1:5,0:-5)
+ [1]  1  2  3  4  5  0 -1 -2 -3 -4 -5
+
+a = 1
+a <- 1
+a <- c(1)
+a = c(1)
+are all the same, by default R stores into vectors,so in the first two cases the type was a vector
+to check the type, we type class(variable)
+
+> a = c(1)
+> b = 1
+> class(a)
+[1] "numeric"
+> class(b)
+[1] "numeric"
+> identical(a,b)
+[1] TRUE
+
+print method can be used to print anything
+> print(a)
+[1] 1
+
 
 Matrices
 
@@ -380,3 +406,56 @@ f(a <- 3) says that assign a variable during a function call -> this is very rar
 
 what to use then?
 what ever we prefer, i will always use '='
+
+Reddit data survey
+file: reddit.csv
+loading data: reddit_data = read.csv('reddit.csv')
+info about the dataset: summary(reddit_data)
+structure of the dataset: str(reddit_data)
+structure of any field in the dataset: str(reddit_data$dog.cat)
+data where dog.cat values are "i like turtles": reddit_data$dog.cat[reddit_data$dog.cat == "I like turtles."]
+total number of above records = length(reddit_data$dog.cat[reddit_data$dog.cat == "I like turtles."])
+Reference to some survey analysis: https://redditblog.com/2011/09/12/who-in-the-world-is-reddit-results-are-in/
+
+This is for the interval variables:
+> levels(reddit_data$age.range)
+[1] "18-24"       "25-34"       "35-44"       "45-54"       "55-64"       "65 or Above"
+[7] "Under 18"
+> qplot(data = reddit_data, x = income.range)
+> qplot(data = reddit_data, x = age.range)
+
+Here, when we plot it using ggplot2 (use Rstudio), we see that the ranges are not as expected, to make them as expected we need to use some of the factor function from the documentation,
+http://statistics.ats.ucla.edu/stat/r/modules/factor_variables.htm
+http://www.cookbook-r.com/Manipulating_data/Changing_the_order_of_levels_of_a_factor/
+
+which means "Under 18" should be before, "18-24": to make this happen,
+reddit_data$age.range = factor(reddit_data$age.range, 
+ levels = c("Under 18", "18-24", "25-34", "35-44", "45-54", "55-64", "65 or Above"), ordered = T)
+
+here we explicity mentioned the age range levels and hence if we check with the levels now, it will be,
+[1] "Under 18"    "18-24"       "25-34"       "35-44"       "45-54"       "55-64"      
+[7] "65 or Above"
+draw and check on Rstudio
+qplot(data = reddit_data, x = age.range)
+
+anther way is,
+reddit_data$age.range = ordered(reddit_data$age.range, 
+ levels = c("Under 18", "18-24", "25-34", "35-44", "45-54", "55-64", "65 or Above"))
+
+Data Munging
+https://www.udacity.com/course/data-wrangling-with-mongodb--ud032
+http://flowingdata.com/2015/02/18/loading-data-and-basic-formatting-in-r/
+http://vita.had.co.nz/papers/tidy-data.pdf
+http://courses.had.co.nz.s3-website-us-east-1.amazonaws.com/12-rice-bdsi/slides/07-tidy-data.pdf
+
+load facebook data,
+> facebook_data = read.csv("~/vikram-code-school/ND/P4/datasets/pseudo_facebook.tsv", sep='\t')
+* by default separator is ','
+
+> names(facebook_data)
+> qplot(data = facebook_data, x = age, bins = 50)
+Now the base color is black, to modify this behavior, read below link, using 'ggthemes' library
+https://github.com/jrnold/ggthemes#examples
+
+REst will be added in separate .r files
+1. facebook_data.rmd
