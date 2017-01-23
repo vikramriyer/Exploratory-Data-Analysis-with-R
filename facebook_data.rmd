@@ -175,6 +175,63 @@ by(pf$www_likes, pf$gender, sum)
 ```
 ## quite easy huh
 
+# Box Plots
+```{r}
+qplot(data = subset(pf, !is.na(gender)),
+      geom = 'boxplot',
+      x = gender,
+      y = friend_count)
+```
+
+```{r}
+qplot(data = subset(pf, !is.na(gender)),
+      geom = 'boxplot',
+      x = gender,
+      y = friend_count,
+      ylim = c(0, 1000))
+```
+## Below is another way aswell which works fine
+```{r}
+qplot(data = subset(pf, !is.na(gender)),
+      geom = 'boxplot',
+      x = gender,
+      y = friend_count) + 
+  scale_y_continuous(limits = c(0, 1000))
+```
+## One more way
+```{r}
+qplot(data = subset(pf, !is.na(gender)),
+      geom = 'boxplot',
+      x = gender,
+      y = friend_count) + 
+  coord_cartesian(ylim = c(0, 1000))
+```
+
+## However, in the above plot, we can see that the box has moved closer to 250 line, lets find why??
+## The dark black line represents the median.
+## Let's zoom into the plot by adjusting the limits to 250 as it sounds reasonable since the box is below the line
+```{r}
+qplot(data = subset(pf, !is.na(gender)),
+      geom = 'boxplot',
+      x = gender,
+      y = friend_count,
+      ylim = c(0, 250))
+```
+
+## It is evident now, that the avg for women is slightly more than that of men, when it comes to number of likes
+```{r}
+by(pf$friend_count, pf$gender, summary)
+```
+
+```{r}
+qplot(data = subset(pf, !is.na(gender)), 
+      x = gender,
+      y = friendships_initiated,
+      geom = 'boxplot') + 
+  coord_cartesian(ylim = c(0, 250))
+by(pf$friendships_initiated, pf$gender, summary)
+```
+
 
 # References
 # Facets: http://www.cookbook-r.com/Graphs/Facets_(ggplot2)/
@@ -185,3 +242,6 @@ by(pf$www_likes, pf$gender, sum)
 # Linear Regression: https://en.wikipedia.org/wiki/Linear_regression#Assumptions
 # Normal Distribution: https://en.wikipedia.org/wiki/Normal_distribution
 # Log Transformations: https://www.r-statistics.com/2013/05/log-transformations-for-skewed-and-wide-distributions-from-practical-data-science-with-r/
+# Box Plots: http://flowingdata.com/2008/02/15/how-to-read-and-use-a-box-and-whisker-plot/
+# IQR: https://en.wikipedia.org/wiki/Interquartile_range
+# 
