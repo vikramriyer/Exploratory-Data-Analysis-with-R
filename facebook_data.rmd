@@ -6,6 +6,8 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
+library(ggplot2)
+library(gridExtra)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -111,8 +113,75 @@ p3 <- p1 + scale_x_sqrt()
 grid.arrange(p1, p2, p3, ncol = 1)
 ```
 
+# Frequency polygons to overlay separate histograms into one
+
+```{r}
+qplot(data = subset(pf, !is.na(gender)), x = friend_count, binwidth = 10, 
+      geom = 'freqpoly', color = gender) +
+  scale_x_continuous(lim = c(0, 1000), breaks = seq(0, 1000, 50))
+```
+
+## the above plot makes it easier to compare the two (males and females). However, our question is to find who has the max number of friends. We might need to tweek this a bit more. Maybe change the y axis to something more meaningful
+
+```{r}
+qplot(data = subset(pf, !is.na(gender)), x = friend_count, binwidth = 10,
+      y = ..count../sum(..count..),
+      geom = 'freqpoly', color = gender, 
+      xlab = 'Friend count',
+      ylab = 'Proportion of users with that friend count') +
+  scale_x_continuous(lim = c(0, 1000), breaks = seq(0, 1000, 50))
+```
+
+## THis makes it much easier, let's try to find where the females beat males by changing the limits. :)
+```{r}
+qplot(data = subset(pf, !is.na(gender)), x = friend_count, binwidth = 10,
+      y = ..count../sum(..count..),
+      geom = 'freqpoly', color = gender, 
+      xlab = 'Friend count',
+      ylab = 'Proportion of users with that friend count') +
+  scale_x_continuous(lim = c(300, 1000), breaks = seq(0, 1000, 50))
+```
+
+```{r}
+# to see the entire summary
+summary(pf)
+# to see the fields only
+names(pf)
+```
+
+# Let's try to find which gender gets the maximum number of likes on www
+```{r}
+qplot(data = subset(pf, !is.na(gender)) , x = www_likes, geom = 'freqpoly', 
+      color = gender) +
+  scale_x_continuous() + 
+  scale_x_log10()
+```
+
+## This graph makes some sense, but its still unclear as to who has more number of likes since women have overtaken men
+## at the tail of the graph
+
+# Let's anaylyze more, male likes
+```{r}
+head(pf)
+pf_no_na_gender = subset(pf, !is.na(gender))
+sum(pf_no_na_gender$www_likes[pf_no_na_gender$gender == 'male']) #1430175
+sum(pf_no_na_gender$www_likes[pf_no_na_gender$gender == 'female']) #3507665
+```
+
+## Now, it is pretty clear that, no of female likes is way more than male likes. However, there
+## is an alternate way to do this,
+```{r}
+by(pf$www_likes, pf$gender, sum)
+```
+## quite easy huh
+
+
 # References
 # Facets: http://www.cookbook-r.com/Graphs/Facets_(ggplot2)/
 # Scales: http://docs.ggplot2.org/current/scale_continuous.html
 # Themes: https://github.com/jrnold/ggthemes#examples
 # More Themes: http://docs.ggplot2.org/0.9.2.1/theme.html 
+# GridExtra: http://lightonphiri.org/blog/ggplot2-multiple-plots-in-one-graph-using-gridextra
+# Linear Regression: https://en.wikipedia.org/wiki/Linear_regression#Assumptions
+# Normal Distribution: https://en.wikipedia.org/wiki/Normal_distribution
+# Log Transformations: https://www.r-statistics.com/2013/05/log-transformations-for-skewed-and-wide-distributions-from-practical-data-science-with-r/
