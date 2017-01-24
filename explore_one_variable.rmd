@@ -1,0 +1,20 @@
+---
+title: "explore_one_variable"
+author: "vikram"
+date: "24 January 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Explore One Variable
+
+## Step 1: Load Diamonds dataset
+```{r}
+library('ggplot2')
+diamonds
+```
+
