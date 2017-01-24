@@ -15,6 +15,80 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Step 1: Load Diamonds dataset
 ```{r}
 library('ggplot2')
-diamonds
+summary(diamonds)
 ```
+
+## Exploring the dataset
+```{r}
+head(diamonds)
+?diamonds
+```
+# How many ordered factors in dataset?
+```{r}
+levels(diamonds$clarity)
+levels(diamonds$cut)
+levels(diamonds$color)
+```
+
+## If we check the output of above commands it makes sense to say that these are ordered, by also reading the description obtained by ?diamonds command
+
+# Create a histogram of the price of
+# all the diamonds in the diamond data set.
+
+# =======================================
+```{r}
+qplot(data = diamonds, x = price)
+```
+
+# Price histogram summary
+ 
+```{r}
+summary(diamonds$price)
+```
+
+## Trying to explore the summary, as to which can be a correct central dependency measure
+```{r}
+qplot(data = diamonds, x = price) +
+  scale_x_continuous(limits = c(0, 2000))
+
+print(length(diamonds$price[diamonds$price < 2401])) #less than median
+print(length(diamonds$price[diamonds$price > 3933])) #less than mean
+```
+
+## It seems the median accounts for the best result here.
+# =====================================================================
+
+# Explore the largest peak in the price histogram created earlier.
+
+## Try limiting the x-axis, altering the bin width,
+## and setting different breaks on the x-axis.
+
+## Save images by using ggsave() command.
+## ggsave() will save the last plot created.
+## For example...
+##                  qplot(x = price, data = diamonds)
+##                  ggsave('priceHistogram.png')
+
+## ggsave currently recognises the extensions eps/ps, tex (pictex),
+## pdf, jpeg, tiff, png, bmp, svg and wmf (windows only).
+
+# Cheaper diamonds
+# ======================================================================
+```{r}
+qplot(data = diamonds, x = price, binwidth = 10) + 
+  scale_x_continuous(limits = c(500, 1000))
+
+qplot(data = diamonds, x = price, binwidth = 10,
+      fill = I("#5670AB"), color = I('black')) +
+  scale_x_continuous(limits = c(500, 1000))
+
+qplot(data = diamonds, x = price, binwidth = 1,
+      fill = I("#5670AB"), color = I('black')) +
+  scale_x_continuous(limits = c(550, 650))
+
+qplot(data = diamonds, x = price, binwidth = 1,
+      fill = I("#5670AB"), color = I('black')) +
+  scale_x_continuous(limits = c(600, 625))
+```
+
 
