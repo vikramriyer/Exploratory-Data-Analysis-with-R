@@ -91,4 +91,29 @@ qplot(data = diamonds, x = price, binwidth = 1,
   scale_x_continuous(limits = c(600, 625))
 ```
 
+# Price by cut histograms
+## Break out the histogram of diamond prices by cut.
+
+## You should have five histograms in separate
+## panels on your resulting plot.
+
+# ======================================================
+## here, we find the summary of price/cut, easy to get the mean, median, etc
+```{r}
+by(diamonds$price, diamonds$cut, summary)
+```
+## Here, we find the what is highest price and which cut has it? so we progress slowly slowly by increasing the values until we are satisfied
+```{r}
+qplot(data = diamonds, 
+      x = cut,
+      y = price) +
+  scale_y_continuous(limits = c(18750, 18830))
+```
+## Here, we find the what is lowest price and which cut has it?
+```{r}
+qplot(data = diamonds, 
+      x = cut,
+      y = price) +
+  scale_y_continuous(limits = c(325, 330))
+```
 
