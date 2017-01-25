@@ -117,3 +117,15 @@ qplot(data = diamonds,
   scale_y_continuous(limits = c(325, 330))
 ```
 
+# 
+```{r}
+qplot(x = price, data = diamonds) + facet_wrap(~ cut, scales = 'free_y')
+```
+
+# 
+```{r}
+qplot(x = price/carat, data = diamonds, binwidth = 0.25, geom = 'histogram') + facet_wrap(~cut, scales = 'free_y') + 
+  scale_x_log10()
+```
+
+
