@@ -464,3 +464,4 @@ REst will be added in separate .r files
 Testing:
 git credential cache test 1
 git credential cache test 2
+git credential cache test : success
