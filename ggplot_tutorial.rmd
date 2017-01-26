@@ -1,0 +1,31 @@
+---
+title: "ggplot_tutorial"
+author: "vikram"
+date: "26 January 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library('ggplot2')
+?diamonds
+```
+
+# Points (Scatterplot)
+```{r}
+levels(diamonds$cut)
+diamonds$predictLine <- predict(lm(price ~ log(carat), data = diamonds))
+ggplot(data = diamonds, aes(x = carat, y = price)) + 
+  geom_point(aes(color = price)) +
+  geom_line(aes(y = predictLine))
+```
+
+
+
+# References:
+## ggplot harvard: http://tutorials.iq.harvard.edu/R/Rgraphics/Rgraphics.html
+## ggplot datacamp: https://www.datacamp.com/courses/data-visualization-with-ggplot2-1
+

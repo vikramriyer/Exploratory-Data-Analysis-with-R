@@ -163,3 +163,36 @@ qplot(data = diamonds, x = color, y = price, geom = 'boxplot', color = color) +
 qplot(data = diamonds, x = cut, y = price/carat, geom = 'boxplot', color = cut) + 
   scale_y_continuous(limits = c(10000, 20000))
 ```
+
+# Price range for middle 50% of diamonds with color 'D'
+
+```{r}
+summary(diamonds)
+str(diamonds)
+diamonds$color_char = as.character(diamonds$color)
+diamonds$color_char
+summary(diamonds$color_char[diamonds$color_char == 'D'])
+summary(diamonds$color)
+summary(diamonds[diamonds$color == 'D', 'color'])
+qplot(data = diamonds$color[diamonds$color == 'D'], x = color)
+quantile(as.character(diamonds$color))
+diamonds_J <- subset(diamonds, color == 'J')
+diamonds_D <- subset(diamonds, color == 'D')
+summary(diamonds_D)
+summary(diamonds_J)
+
+quantile(diamonds_D$price, probs = seq(0,1,0.25)) #This will give the range of values each range having 25%, thus we can find the middle 50% of the price values
+quantile(diamonds_J$price, probs = seq(0,1,0.25))
+
+IQR(diamonds_D$price) #IQR for the best diamond
+IQR(diamonds_J$price) #IQR for the worst diamond
+# Note that, the lesser the IQR, more is the consistency of data
+# Suppose weights of students in a class A are: 45, 50, 52, 55, 56, 57, 57, 58, 68, 70, IQR = 58-52 = 6, i.e. max data points in the dataset fall in the range of 6kgs
+# Suppose weights of students in a class B are: 30, 33, 40, 45, 50, 59, 68, 72, 85, 90, IQR = 72-40 = 32, i.e. max data points in the dataset fall in the range of 32kgs
+# here weights in the class A are more consistent.
+```
+```{r}
+
+```
+
+
