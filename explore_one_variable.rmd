@@ -128,4 +128,38 @@ qplot(x = price/carat, data = diamonds, binwidth = 0.25, geom = 'histogram') + f
   scale_x_log10()
 ```
 
+## Investigate the price of diamonds using box plots,
+## numerical summaries, and one of the following categorical
+## variables: cut, clarity, or color.
 
+# BOXPLOTS BY CUT
+## =================================================================
+
+```{r}
+summary(diamonds)
+levels(diamonds$cut)
+qplot(data = diamonds, x = price, y = cut, geom = 'boxplot') +
+  facet_wrap(~ cut)
+```
+
+# BOXPLOTS BY CLARITY
+## =================================================================
+```{r}
+qplot(data = diamonds, x = clarity, y = price, geom = 'boxplot', color = clarity)
+levels(diamonds$clarity)
+?diamonds
+```
+
+# BOXPLOTS BY COLOR
+## =================================================================
+```{r}
+qplot(data = diamonds, x = color, y = price, geom = 'boxplot', color = color) + 
+  facet_wrap(~ color, scales = 'free_y')
+```
+
+# BOXPLOTS BY CUT
+## =================================================================
+```{r}
+qplot(data = diamonds, x = cut, y = price/carat, geom = 'boxplot', color = cut) + 
+  scale_y_continuous(limits = c(10000, 20000))
+```
