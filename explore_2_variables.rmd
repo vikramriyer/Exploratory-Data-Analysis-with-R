@@ -1,0 +1,84 @@
+---
+title: "explore_2_variables"
+author: "vikram"
+date: "26 January 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## qplot vs ggplot syntax
+```{r}
+pf = read.csv('/home/vikram.iyer/vikram-code-school/ND/P4/datasets/pseudo_facebook.tsv', sep = '\t', header = TRUE)
+summary(pf)
+names(pf)
+summary(pf$age)
+
+qplot(x = age, y = friend_count, data = pf)
+
+ggplot(aes(x = age, y = friend_count), data = pf) + # aesthetic wrapper is necessary in case of ggplot
+  geom_point() + # scatter plot
+  xlim(13,90) # people having age less than 13 are not allowed to use facebook, and above 90 less likely to use
+```
+
+```{r}
+## Since the lower area is densely populated, we are unable to see the points carefully
+ggplot(aes(x = age, y = friend_count), data = pf) +
+  geom_point(alpha = 1/20) +
+  xlim(13,90)
+
+## THis looks a tad bit better, however, we still do not get a feel of the distribution
+## Let's try adding some change
+```
+```{r}
+ggplot(aes(x = age, y = friend_count), data = pf) +
+  geom_jitter(alpha = 1/20) +
+  xlim(13,90)
+## Aha, this gives a better view of the distribution :)
+```
+
+```{r}
+ggplot(aes(x = age, y = friend_count), data = pf) +
+  geom_point(alpha = 1/20) +
+  xlim(13,90) +
+  coord_trans(y = 'sqrt')
+```
+
+```{r}
+## To use jitter with the above plot, there is a more advanced syntax and it is as below, which given a better view of the plot
+## h = 0, ensures that there are no negative points since some people have a friend count of 0, a min acceptable height is 0,
+## jitter actually adds positive or negative noise to the points and thus, it may add negative for 0 friend count users
+ggplot(aes(x = age, y = friend_count), data = pf) +
+  geom_jitter(alpha = 1/20, position = position_jitter(h = 0)) +
+  xlim(13,90) +
+  coord_trans(y = 'sqrt')
+```
+
+```{r}
+## Friendships initiated
+ggplot(aes(x = age, y = friendships_initiated), data = pf) +
+  geom_jitter(alpha = 1/20, position = position_jitter(h = 0)) +
+  xlim(13,90) +
+  coord_trans(y = 'sqrt')
+## IT seems younger people initiate more friendsips than the oldies
+
+by(pf$friendships_initiated, pf$age, summary) # This will give a count of friendships initiated at every age in the dataset
+
+# Let's break down the plot into various ages
+ggplot(aes(x = age, y = friendships_initiated), data = pf) +
+  geom_jitter(alpha = 1/20, position = position_jitter(h = 0)) +
+  xlim(13,30) +
+  coord_trans(y = 'sqrt')
+
+ggplot(aes(x = age, y = friendships_initiated), data = pf) +
+  geom_jitter(alpha = 1/20, position = position_jitter(h = 0)) +
+  xlim(31,50) +
+  coord_trans(y = 'sqrt')
+
+ggplot(aes(x = age, y = friendships_initiated), data = pf) +
+  geom_jitter(alpha = 1/20, position = position_jitter(h = 0)) +
+  xlim(50,90) +
+  coord_trans(y = 'sqrt')
+```
