@@ -459,3 +459,7 @@ https://github.com/jrnold/ggthemes#examples
 
 REst will be added in separate .r files
 1. facebook_data.rmd
+
+
+Testing:
+git credential cache test
