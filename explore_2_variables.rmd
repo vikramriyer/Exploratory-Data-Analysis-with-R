@@ -82,3 +82,51 @@ ggplot(aes(x = age, y = friendships_initiated), data = pf) +
   xlim(50,90) +
   coord_trans(y = 'sqrt')
 ```
+
+## Conditional means
+```{r}
+## for every age, what is the mean and median of the friend counts, and the total count as well
+library(dplyr)
+age_groups <- group_by(pf, age)
+pf.fc_by_age <- summarise(age_groups,
+          friend_count_mean = mean(friend_count),
+          friend_count_median = median(friend_count),
+          n = n())
+pf.fc_by_age <- arrange(pf.fc_by_age, age)
+head(pf.fc_by_age)
+```
+
+## Alternate code for conditional means
+```{r}
+pf.fc_by_age <- pf %>%
+  group_by(age) %>%
+  summarise(friend_count_mean = mean(as.numeric(friend_count)),
+            friend_count_median = median(as.numeric(friend_count)),
+            n = n()) %>%
+  arrange(age)
+
+head(pf.fc_by_age)
+```
+
+## dpylr basics
+```{r}
+dim(pf.fc_by_age)
+summary(pf.fc_by_age)
+pf.fc_by_age
+filter(pf.fc_by_age, age >= 13 & age <= 20)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
