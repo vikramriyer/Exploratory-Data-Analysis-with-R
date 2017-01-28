@@ -110,18 +110,83 @@ head(pf.fc_by_age)
 
 ## dpylr basics
 ```{r}
+## a dplyr, allows us to split a particular dataframe and apply functions to manipulate/change certain parts of the data, like only applying a certain function to a field
+## below we can see tht mean, median are applied to only the friend count
+
 dim(pf.fc_by_age)
 summary(pf.fc_by_age)
 pf.fc_by_age
-filter(pf.fc_by_age, age >= 13 & age <= 20)
+filter(pf.fc_by_age, (age >= 13 & age <= 20) | (age >= 20 & age <= 21))
+# The above statement is an alternative to verbose code in traditional R which is written as below
+na.omit(pf.fc_by_age[(pf.fc_by_age >= 13 & pf.fc_by_age$age <= 20) | (pf.fc_by_age >= 20 & pf.fc_by_age$age <= 21), ])
+# same can be done using the subset function as well
+subset(pf.fc_by_age, (age >= 13 & age <= 20) | (age >= 20 & age <= 21))
+## However, as mentioned in the doc for dpylr, any number of filtering conditions are possible with filter()
 ```
 
+## friend_count_mean vs age
+```{r}
+ggplot(pf.fc_by_age, aes(x = age, y = friend_count_mean, color = age)) +
+  geom_line()
+```
 
+## Now, I want to overlay the original plot with the one drawn above, i.e. the mean against original
+```{r}
+ggplot(aes(x = age, y = friend_count), data = pf) +
+  xlim(13, 90) +
+  geom_point(alpha = 0.05,
+             position = position_jitter(h = 0),
+             color = 'dark green') +
+  coord_trans(y = 'sqrt') +
+  geom_line(stat = 'summary',  fun.y = mean) +
+  geom_line(stat = 'summary',  fun.y = quantile, fun.args = list(probs = .1), linetype = 4, color = 'red') +
+  geom_line(stat = 'summary',  fun.y = quantile, fun.args = list(probs = .9), linetype = 2, color = 'blue') +
+  geom_line(stat = 'summary',  fun.y = quantile, fun.args = list(probs = .5), linetype = 3, color = 'yellow')
+#  coord_cartesian(xlim = c(13,90))
+```
 
+### Bonus: 
+### corelation coefficient: Representing a scatter plot as a numeric value between, -1 and 1.
+### Steps: to identify
+#### 1. the plot fits a straight line
+#### 2. the slope is either positive or negaative; -ve slope = -ve corelation coef, +ve slope = +ve cor. coef
+#### 3. quality of fit - the scatter plot points are closer to the regression line
+#### https://www.youtube.com/watch?v=ugd4k3dC_8Y -> wonderful video on corelation coefficient, if scatter along the y-axis is greater, then the coef is strong, and also the scatter
+#### along the fitted line from step 1
 
+### We can say that, having more than 1000 users is very rare, even for young individuals
+```{r}
+ggplot(aes(x = age, y = friend_count), data = pf) +
+  xlim(13,90) +
+  geom_point()
 
+?cor
+?cor.test()
 
+cor(pf$age, pf$friend_count)
+cor(pf$age, pf$friend_count, method = 'pearson') # by default uses pearson
 
+with(subset(pf, age <= 70), cor.test(age, friend_count, method = 'pearson'))
+with(subset(pf, age <= 70), cor.test(age, friend_count, method = 'spearman'))
+## both methods give diff values 
+```
+
+# Create a scatterplot of likes_received (y) vs. www_likes_received (x). Use any of the techniques that you've learned so far to modify the plot.
+### ===========================================================
+```{r}
+ggplot(aes(x = www_likes_received, y = likes_received), data = pf) +
+  geom_point(shape=1) +
+  geom_smooth(method=lm)
+
+with(pf,cor.test(likes_received,www_likes_received))
+
+## now we can see that there are some outliers and its difficult to see the quartiles
+ggplot(aes(x = www_likes_received, y = likes_received), data = pf) +
+  geom_point(shape=1) +
+  geom_smooth(method=lm, color = 'red') + ## adds a regression line
+  xlim(0, quantile(pf$www_likes_received, 0.95)) +# choose 95 percent quartile as uper bound
+  ylim(0, quantile(pf$likes_received, 0.95))
+```
 
 
 
