@@ -116,8 +116,8 @@ cor.test(diamonds$price, diamonds$volume)
 ```
 
 ```{r}
-## lets form subset where the volume is not 0
-new_diamonds <- subset(diamonds, volume != 0)
+## lets form subset where the volume is not 0 and not greater than 800
+new_diamonds <- subset(diamonds, volume != 0 & volume < 800)
 
 ## now lets find th corelation
 cor.test(new_diamonds$price, new_diamonds$volume)
@@ -125,4 +125,70 @@ cor.test(new_diamonds$price, new_diamonds$volume)
 ## So it seems there is some corelation and we can predict the prices from the volume
 ```
 
+```{r}
+## adjustments in price vs volume
+ggplot(aes(x = volume, y = price), data = new_diamonds) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = lm)
+```
+
+# task 5
+##  Use the function dplyr package to create a new data frame containing info on diamonds by clarity
+```{r}
+library(dplyr)
+diamondsByClarity <- diamonds %>%
+  group_by(clarity) %>%
+  summarise(mean_price = mean(price),
+            median_price = median(price),
+            min_price = min(price),
+            max_price = max(price),
+            n = n())
+
+diamondsByClarity
+```
+# summary data frames with the mean price by clarity and color are created below.
+```{r}
+diamonds_by_clarity <- group_by(diamonds, clarity)
+diamonds_mp_by_clarity <- summarise(diamonds_by_clarity, mean_price = mean(price))
+
+diamonds_by_color <- group_by(diamonds, color)
+diamonds_mp_by_color <- summarise(diamonds_by_color, mean_price = mean(price))
+```
+
+
+## write additional code to create two bar plots on one output image using the grid.arrange() function from the package gridExtra
+```{r}
+p1 <- ggplot(diamonds_mp_by_clarity, aes(x = clarity, y = mean_price, fill = clarity)) +
+  geom_bar(stat = "summary")
+p1
+```
+
+```{r}
+## ctd.
+p2 = ggplot(diamonds_mp_by_color, aes(x = color, y = mean_price, fill= color)) +
+  geom_bar(stat = "summary")
+p2
+```
+
+```{r}
+## ctd
+library(gridExtra)
+grid.arrange(p1,p2, ncol =2)
+```
+
+```{r}
+# mean price for s12 is highest while it is lowest for VVS1
+# mean price for color 'J' is highest while it is lowest for E
+# in short: Mean price tends to decrease as clarity improves. The same can be said for color.
+```
+
+
+# References: 
+#### http://www.ats.ucla.edu/stat/r/faq/smooths.htm
+#### http://simplystatistics.org/
+#### https://en.wikipedia.org/wiki/Local_regression
+#### http://www.mindmapinspiration.com/wp-content/uploads/2009/02/curious-brain-mind-map-10.jpg
+#### http://flowingdata.com/2014/02/27/how-to-read-histograms-and-use-them-in-r/
+#### http://docs.ggplot2.org/0.9.3/geom_bar.html
+#### https://rstudio-pubs-static.s3.amazonaws.com/52545_d5a11147091d477eb66cb9d22ea649a2.html -> used only for visual improvements like filling color, etc
 
