@@ -1,0 +1,128 @@
+---
+title: 'problem_set: explore two variables'
+author: "vikram"
+date: "28 January 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## explore the dataset
+```{r}
+library(ggplot2)
+suppressPackageStartupMessages(library(ggplot2))
+?diamonds
+names(diamonds)
+```
+
+```{r}
+dim(diamonds)
+```
+
+```{r}
+levels(diamonds$cut)
+```
+```{r}
+levels(diamonds$color)
+```
+```{r}
+levels(diamonds$clarity)
+```
+
+# task 1
+## create a scatterplot of price vs x. using the ggplot syntax.
+
+```{r}
+ggplot(aes(x = price, y = x), data = diamonds) +
+  geom_point()
+```
+
+```{r}
+# is there anything strange about the scatterplot?
+# 1. outliers, some entries with length = 0mm and still a price associated with it
+# 2. exponential growth of price with length
+```
+
+```{r}
+# corelation between price and x, price and y, price and z
+cor.test(diamonds$price, diamonds$x)
+cor.test(diamonds$price, diamonds$y)
+cor.test(diamonds$price, diamonds$z)
+```
+
+# task 2
+## create a scatterplot of price vs depth
+```{r}
+## also add a transparency factor of 1/100 i.e. 0.01 and add breaks of 2units on y-axis
+ggplot(aes(x = price, y = depth), data = diamonds) +
+  geom_point(alpha = 0.01) +
+  geom_smooth(method = lm, color = 'red', linetype = 2) +
+  scale_y_continuous(breaks = seq(0,80,2))
+
+## looking at the graph, what is range of depth between which most of the values lie?
+## 60 to 64
+```
+
+```{r}
+## corelation of depth vs price
+cor(diamonds$depth, diamonds$price)
+with(diamonds, cor.test(price, depth))
+
+```
+
+```{r}
+## can we predict price based on depth?
+## No. Because, the value is very much close to 0 which is not a strong mark for prediction, we need something above 70% i.e. (<= -.7 or >= +.7)
+```
+
+
+# task 3
+## Create a scatterplot of price vs carat and omit the top 1% of price and carat values
+```{r}
+ggplot(aes(x = carat, y = price), data = diamonds) +
+  xlim(0, quantile(diamonds$carat,0.99)) +
+  ylim(0, quantile(diamonds$price,0.99)) +
+  geom_point()
+```
+
+# tassk 4
+## create a scatterplot of price vs. volume (x*y*z), This is a very rough approximation for a diamond's volume
+```{r}
+ggplot(aes(x = (x*y*z), y = price), data = diamonds ) +
+  geom_point()
+```
+## Create a new variable for volume in the diamonds data frame (will be used later)
+```{r}
+diamonds$volume <- (diamonds$x*diamonds$y*diamonds$z)
+```
+
+```{r}
+## observations from price vs volume scatterplot
+## 1. outliers: volume = 0
+sum(diamonds$volume == 0)
+```
+
+```{r}
+## lets find whiich are they
+diamonds[diamonds$volume == 0,]
+```
+
+```{r}
+## corelation between price and volume
+cor.test(diamonds$price, diamonds$volume)
+## 0.9 seems to be a very high value for the corelation coefficient, even if we ignore the 20 outliers, it looks quite something which we can bet upon
+```
+
+```{r}
+## lets form subset where the volume is not 0
+new_diamonds <- subset(diamonds, volume != 0)
+
+## now lets find th corelation
+cor.test(new_diamonds$price, new_diamonds$volume)
+
+## So it seems there is some corelation and we can predict the prices from the volume
+```
+
+
