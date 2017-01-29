@@ -182,7 +182,6 @@ grid.arrange(p1,p2, ncol =2)
 # in short: Mean price tends to decrease as clarity improves. The same can be said for color.
 ```
 
-
 # References: 
 #### http://www.ats.ucla.edu/stat/r/faq/smooths.htm
 #### http://simplystatistics.org/
@@ -191,4 +190,4 @@ grid.arrange(p1,p2, ncol =2)
 #### http://flowingdata.com/2014/02/27/how-to-read-histograms-and-use-them-in-r/
 #### http://docs.ggplot2.org/0.9.3/geom_bar.html
 #### https://rstudio-pubs-static.s3.amazonaws.com/52545_d5a11147091d477eb66cb9d22ea649a2.html -> used only for visual improvements like filling color, etc
-
+#### http://dept.stat.lsa.umich.edu/~kshedden/Courses/Stat401/Notes/401-bivariate-slides.pdf

@@ -1,0 +1,181 @@
+---
+title: "explore_many_variables"
+author: "vikram"
+date: "28 January 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(gridExtra)
+```
+
+## Explore the dataset
+```{r}
+pf = read.csv('/home/vikram.iyer/vikram-code-school/ND/P4/datasets/pseudo_facebook.tsv', sep = '\t', header = TRUE)
+head(pf)
+names(pf)
+dim(pf)
+
+```
+
+
+## Third qualitative Variable
+```{r}
+p1 <- ggplot(aes(x = gender, y = age), data = subset(pf, !is.na(gender))) +
+  geom_boxplot() 
+```
+
+```{r}
+p2 <- ggplot(aes(x = gender, y = age), data = subset(pf, !is.na(gender))) +
+  geom_boxplot() +
+  stat_summary(fun.y = mean, geom = 'point', shape = 5)
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+```{r}
+## lets compare the two using a line plot
+
+ggplot(aes(x = age, y = friend_count), data = subset(pf, !is.na(gender))) +
+  geom_line(aes(color = gender), stat = 'summary', fun.y = median)
+```
+
+```{r}
+library(dplyr)
+pf.fc_by_age_gender <- subset(pf, !is.na(gender)) %>%
+  group_by(age, gender) %>%
+  summarise(mean_friend_count = mean(friend_count),
+            median_friend_count = median(friend_count),
+            n = n()) %>%
+  arrange(age)
+
+## the above code fails to work because,
+# 1. we grouped by age first
+# 2. we grouped by gender
+# 3. now if without applying the ungroup, we are trying to arrange w.r.t age, but it is already grouped by gender, 
+# so we need to remove one layer of grouping from gender and then apply arrange by age
+
+## Now the below code will work
+pf.fc_by_age_gender <- subset(pf, !is.na(gender)) %>%
+  group_by(age, gender) %>%
+  summarise(mean_friend_count = mean(friend_count),
+            median_friend_count = median(friend_count),
+            n = n()) %>%
+  ungroup() %>%
+  arrange(age)
+
+## Reference: http://stackoverflow.com/questions/27207963/arrange-not-working-on-grouped-data-frame
+
+##  we have used the subset() command, filter() can also be used
+pf.fc_by_age_gender <- pf %>%
+  filter(!is.na(gender)) %>%
+  group_by(age, gender) %>%
+  summarise(mean_friend_count = mean(friend_count),
+            median_friend_count = median(friend_count),
+            n = n()) %>%
+  ungroup() %>%
+  arrange(age)
+
+pf.fc_by_age_gender
+```
+
+# Create a line graph showing the median friend count over the ages for each gender. Be sure to use the data frame you just created, pf.fc_by_age_gender
+```{r}
+names(pf.fc_by_age_gender)
+ggplot(aes(x = age, y = median_friend_count), data = pf.fc_by_age_gender) +
+  geom_line(stat = 'summary', aes(color = gender), fun.y = median)
+```
+
+```{r}
+library(tidyr) ## reshape2 and tidyr both perform the operations that we desire, lets see examples of both
+spread(subset(pf.fc_by_age_gender, select = c('gender', 'age', 'median_friend_count')), gender, median_friend_count)
+suppressMessages(library(reshape2))
+pf.fc_by_age_gender.wide <- dcast(pf.fc_by_age_gender, # dcast - dataframe, acast - array/matrix
+                                  age ~ gender,
+                                  value.var = 'median_friend_count')
+
+head(pf.fc_by_age_gender.wide)
+```
+
+# Plot the ratio of the female to male median friend counts using the data frame pf.fc_by_age_gender.wide
+```{r}
+ggplot(aes(x = age, y = female/male), data = pf.fc_by_age_gender.wide) +
+  geom_line() +
+  geom_hline(alpha = .3, yintercept = 1, linetype = 2)
+```
+
+# Third quantitative variable
+## Create a variable called year_joined in the 'pf' data frame using the variable tenure and 2014 as the reference year
+```{r}
+#year_joined 
+pf$year_joined <- floor(2014 - pf$tenure/365)
+```
+
+```{r}
+summary(pf$year_joined)
+table(pf$year_joined)
+```
+## use cut to separate out the year_joined var into 4 bins
+## 2004-2009
+## 2009-2011
+## 2011-2012
+## 2012-2014
+```{r}
+pf$year_joined.bucket <- cut(pf$year_joined,
+                             c(2004,2009,2011,2012,2014))
+pf
+# Reference: https://www.r-bloggers.com/r-function-of-the-day-cut-2/
+```
+
+# Plotting 
+```{r}
+table(pf$year_joined.bucket, useNA = 'ifany')
+ggplot(aes(x = age, y = friend_count), 
+              data = subset(pf, !is.na(year_joined.bucket))) + 
+  geom_line(aes(color = year_joined.bucket), stat = 'summary', fun.y = median)
+```
+
+```{r}
+ggplot(aes(x = age, y = friend_count), 
+              data = subset(pf, !is.na(year_joined.bucket))) + 
+  geom_line(aes(color = year_joined.bucket), stat = 'summary', fun.y = mean) +
+  geom_line(stat = 'summary', linetype = 4, fun.y = mean) # grand mean
+```
+
+# Friending rate solution
+```{r}
+with(subset(pf, tenure >= 1), summary(friend_count / tenure))
+```
+
+# Create a line graph of mean of friendships_initiated per day (of tenure) vs. tenure colored by year_joined.bucket.
+```{r}
+ggplot(aes(x = tenure, y = friendships_initiated / tenure), 
+              data = subset(pf, tenure >= 1)) + 
+  geom_line(aes(color = year_joined.bucket), fun.y = mean)
+```
+## Here, we can say that, people who have more tenure, do not initiate many requests
+```{r}
+# we will apply some smoothers to reduce the noise
+ggplot(aes(x = 7 * round(tenure / 7), y = friendships_initiated / tenure),
+       data = subset(pf, tenure > 0)) +
+  geom_smooth(aes(color = year_joined.bucket), method = lm)
+
+# Reference: http://scott.fortmann-roe.com/docs/BiasVariance.html
+```
+
+# explore yogurt.csv
+```{r}
+
+```
+
+
+# References
+#### http://stackoverflow.com/questions/27207963/arrange-not-working-on-grouped-data-frame
+#### https://s3.amazonaws.com/udacity-hosted-downloads/ud651/DataWranglingWithR.pdf
+#### http://seananderson.ca/2013/10/19/reshape.html
+#### http://www.cookbook-r.com/Manipulating_data/Converting_data_between_wide_and_long_format/
+#### https://www.r-bloggers.com/melt/
+#### https://www.r-bloggers.com/r-function-of-the-day-cut-2/
+#### http://scott.fortmann-roe.com/docs/BiasVariance.html
