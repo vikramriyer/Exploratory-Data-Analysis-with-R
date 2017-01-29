@@ -167,9 +167,86 @@ ggplot(aes(x = 7 * round(tenure / 7), y = friendships_initiated / tenure),
 
 # explore yogurt.csv
 ```{r}
-
+yo <- read.csv('/home/vikram.iyer/vikram-code-school/ND/P4/datasets/yogurt.csv')
+names(yo)
+summary(yo)
+dim(yo)
+head(yo)
+?yo # no documentation
+str(yo)
 ```
 
+```{r}
+## for now, convert id from int to factor
+yo$id <- factor(yo$id)
+str(yo)
+```
+
+```{r}
+## plot histogram of yogurt prices
+ggplot(aes(x = price), data = yo) +
+  geom_histogram()
+```
+
+```{r}
+#let's find the range of values of prices to plot it better
+range(yo$price)
+```
+
+```{r}
+## THis says that,we specify the limits to be from 20 to 70 for the prices
+ggplot(aes(x = price), data = yo) +
+  geom_histogram(fill = I('#F79420')) +
+  scale_x_continuous(limits = c(20, 70), breaks = seq(20,70,2))
+```
+
+### As expected, this distribution has lots of discontinuity since the prices will not be in a continuous range
+### Also, prices are mostly close to 20,30,40,50,60,70 
+
+
+# No of purchases
+## Create a new variable called all.purchases, which gives the total counts of yogurt for each observation or household.
+## One way to do this is using the transform function. You can look up the function transform and run the examples of code at the bottom of the documentation to figure out what it does.
+
+```{r}
+yo <- transform(yo, all.purchases = strawberry + blueberry + pina.colada + plain + mixed.berry)
+## Insteadd of transform, even below code would have been fine, but a bit more verbose
+### yo$all.purchases = yo$strawberry + yo$blueberry + yo$pina.colada + yo$plain + yo$mixed.berry
+```
+
+```{r}
+## Lets create a histogram for this
+ggplot(aes(x = all.purchases), data = yo, bindiwidth = 1) +
+  geom_histogram(fill = I('#6C8129'))
+```
+
+# Create a scatterplot of price vs time. This will be an example of a time series plot. Resolve overplotting issues
+```{r}
+names(yo)
+ggplot(aes(x = time, y = price), data = yo) +
+    geom_jitter(alpha = 1/4, shape = 21, fill = I('833199'))
+```
+
+## We can say by looking at the above graph that, the prices have been increasing over time
+
+# Sampling data
+## When we have multiple observations to be taken care of, we must pick a random sample of smaller size and try exploring it and performing statistical observations
+```{r}
+set.seed(0009) # Set the seed for reproducible results
+sample(levels(yo$id),16)
+sample.ids <- sample(levels(yo$id),16)
+
+ggplot(aes(x = time, y = price), data = subset(yo, id %in% sample.ids)) +
+  facet_wrap( ~ id) +
+  geom_line() +
+  geom_point(aes(size = all.purchases), pch = 4)
+```
+
+# Scatterplot matrices
+
+```{r}
+pf[ , c(2:7)] 
+```
 
 # References
 #### http://stackoverflow.com/questions/27207963/arrange-not-working-on-grouped-data-frame
@@ -179,3 +256,9 @@ ggplot(aes(x = 7 * round(tenure / 7), y = friendships_initiated / tenure),
 #### https://www.r-bloggers.com/melt/
 #### https://www.r-bloggers.com/r-function-of-the-day-cut-2/
 #### http://scott.fortmann-roe.com/docs/BiasVariance.html
+#### http://www.perossi.org/home/bsm-1
+#### http://www.nuff.ox.ac.uk/Economics/papers/2013/Panel%20Data%20Demand%20-%20June%2020,%202013.pdf
+#### http://htmlcolorcodes.com/ -> for hex color codes :D
+#### http://www.statmethods.net/advgraphs/parameters.html
+#### https://s3.amazonaws.com/udacity-hosted-downloads/ud651/scatterplotMatrix.pdf
+#### http://www.statmethods.net/advgraphs/parameters.html
