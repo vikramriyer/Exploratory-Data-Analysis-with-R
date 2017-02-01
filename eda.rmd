@@ -2,3 +2,10 @@
 # use wineQualityReds.csv for the dataset
 # use the Redirecting.txt to read about the dataset
 ```
+
+# Familiarize with data
+```{r}
+# Load data
+wine = read.csv('/home/vikram.iyer/vikram-code-school/ND/P4/datasets/wineQualityReds.csv')
+names(wine)
+```

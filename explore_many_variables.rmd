@@ -39,7 +39,10 @@ grid.arrange(p1, p2, ncol = 2)
 ## lets compare the two using a line plot
 
 ggplot(aes(x = age, y = friend_count), data = subset(pf, !is.na(gender))) +
-  geom_line(aes(color = gender), stat = 'summary', fun.y = median)
+  geom_line(aes(color = gender), stat = 'summary', fun.y = median) +
+  scale_x_continuous(limits = c(13,70), breaks = seq(0,70,5))
+
+names(pf)
 ```
 
 ```{r}
