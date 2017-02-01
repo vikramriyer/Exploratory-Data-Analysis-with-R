@@ -9,3 +9,64 @@
 wine = read.csv('/home/vikram.iyer/vikram-code-school/ND/P4/datasets/wineQualityReds.csv')
 names(wine)
 ```
+
+# summary of the data
+```{r}
+summary(wine)
+```
+
+# chunk of data
+```{r}
+head(wine)
+```
+
+# Total observations and fields
+```{r}
+dim(wine)
+```
+
+# structure of the dataset
+```{r}
+str(wine)
+```
+
+```{r}
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(dplyr))
+```
+
+# Let's start by plotting a simple graph
+```{r}
+ggplot(aes(x = quality, y = pH), data = wine) +
+  geom_point()
+```
+
+### The first thing we notice is that, all the values are in the range 0-7, which means acidic
+### Now, as I could clearly see an outlier here, quality = 6, pH > 4; I became curious as to is there a standard pH value for wine.
+### And it turns out that, commonly wine has pH range between 2.9 to 3.9. Let's verify if this is true in our dataset
+
+```{r}
+length(wine$pH[ wine$pH > 2.9 & wine$pH < 3.9 ])
+```
+
+### Whoa! Out of the total 1599 observations, 1585 are in the range that we expected them to be in. You can refer to 'ref link 1' below
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# References:
+#### ref link 1: https://en.wikipedia.org/wiki/Acids_in_wine
+#### ref link 2:
+#### ref link 3:
+#### ref link 
