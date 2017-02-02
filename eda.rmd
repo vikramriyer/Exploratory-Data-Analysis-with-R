@@ -43,13 +43,42 @@ ggplot(aes(x = quality, y = pH), data = wine) +
 
 ### The first thing we notice is that, all the values are in the range 0-7, which means acidic
 ### Now, as I could clearly see an outlier here, quality = 6, pH > 4; I became curious as to is there a standard pH value for wine.
-### And it turns out that, commonly wine has pH range between 2.9 to 3.9. Let's verify if this is true in our dataset
+### And it turns out that, generally, wine has pH range between 2.9 to 3.9. Let's verify if this is true in our dataset
 
 ```{r}
-length(wine$pH[ wine$pH > 2.9 & wine$pH < 3.9 ])
+length(wine$pH[wine$pH > 2.9 & wine$pH < 3.9])
 ```
 
-### Whoa! Out of the total 1599 observations, 1585 are in the range that we expected them to be in. You can refer to 'ref link 1' below
+### Whoa! Out of the total 1599 observations, 1585 are in the range that we expected them to be in. You can refer to 'ref link 1' below. Let's see which are the outliers or the ones
+### that do not follow the convention
+```{r}
+wine$pH[wine$pH < 2.9 | wine$pH > 3.9]
+```
+
+### 
+
+```{r}
+names(wine)
+```
+```{r}
+ggplot(aes(x = pH), data = wine) +
+  geom_histogram() +
+  scale_x_continuous(limits = c(2.7, 4.1), breaks = seq(2.7,4.1,0.1))
+```
+
+```{r}
+ggplot(aes(x = pH, color = I('black'), fill = I('#408463')), data = wine) +
+  geom_histogram() +
+  scale_x_continuous(limits = c(3.2, 3.4), breaks = seq(3.2,3.4,0.01))
+```
+
+```{r}
+names(wine)
+```
+
+
+
+
 
 
 
