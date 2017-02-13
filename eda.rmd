@@ -33,13 +33,106 @@ str(wine)
 ```{r}
 suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(gridExtra))
 ```
+
+#Univariate Analysis
+
+##By looking at the values of the quality we can say that it has a range that is absolute. Hence, we can convert into factor and check if we cab obtains levels
+
+```{r}
+wine$quality.asFactor <- factor(wine$quality)
+
+levels(wine$quality.asFactor)
+```
+
+##Let's plot all the variables and view them from under the hood of univariate
+```{r}
+
+
+p1 <- ggplot(aes(x = quality.asFactor), data = wine) +
+  geom_histogram(stat = 'count')
+
+p2 <- ggplot(aes(x = citric.acid), data = wine) +
+  geom_histogram(stat = 'count')
+
+p3 <- ggplot(aes(x = alcohol), data = wine) +
+  geom_histogram(stat = 'count')
+
+p4 <- ggplot(aes(x = sulphates), data = wine) +
+  geom_histogram(stat = 'count')
+
+p5 <- ggplot(aes(x = fixed.acidity), data = wine) +
+  geom_histogram(stat = 'count')
+
+p6 <- ggplot(aes(x = density), data = wine) +
+  geom_histogram(stat = 'count')
+
+p7 <- ggplot(aes(x = pH), data = wine) +
+  geom_histogram(stat = 'count')
+
+p8 <- ggplot(aes(x = total.sulfur.dioxide), data = wine) +
+  geom_histogram(stat = 'count')
+
+p9 <- ggplot(aes(x = volatile.acidity), data = wine) +
+  geom_histogram(stat = 'count')
+
+p10 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) +
+  geom_histogram(stat = 'count')
+
+p11 <- ggplot(aes(x = chlorides), data = wine) +
+  geom_histogram(stat = 'count')
+
+p12 <- ggplot(aes(x = residual.sugar), data = wine) +
+  geom_histogram(stat = 'count')
+```
+
+```{r}
+grid.arrange(p1, p2, p3, p4, ncol = 2)
+```
+
+```{r}
+grid.arrange(p5, p6, p7, p8, ncol = 2)
+```
+
+
+```{r}
+grid.arrange(p9, p10, p11, p12, ncol = 2)
+```
+
+### let's define levels for quality of wine
+```{r}
+levels(wine$quality.asFactor)
+```
+
+```{r}
+# let's further classify them into 3 ordinal variables: low(3,4), medium(5,6), high(7,8)
+low <- wine$quality <= 4
+medium <- wine$quality > 4 & wine$quality < 7
+high <- wine$quality > 6
+wine$quality.category <- factor(ifelse(low, 'low', ifelse(medium, 'medium', 'high')))
+```
+
+```{r}
+levels(wine$quality.category)
+```
+
+## BiVariate Analysis
 
 # Let's start by plotting a simple graph
 ```{r}
 ggplot(aes(x = quality, y = pH), data = wine) +
   geom_point()
 ```
+
+```{r}
+ggplot(aes(x = quality, y = pH), data = wine) +
+  geom_point() +
+  stat_smooth(method = 'lm', se = FALSE)
+## This is a negative
+summary(wine$quality)
+```
+
 
 ### The first thing we notice is that, all the values are in the range 0-7, which means acidic
 ### Now, as I could clearly see an outlier here, quality = 6, pH > 4; I became curious as to is there a standard pH value for wine.
