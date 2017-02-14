@@ -72,6 +72,7 @@ p7 <- ggplot(aes(x = pH), data = wine) +
   geom_histogram(stat = 'count')
 
 p8 <- ggplot(aes(x = total.sulfur.dioxide), data = wine) +
+  scale_x_continuous(limits = c(0,170), breaks = seq(0,170,5)) +
   geom_histogram(stat = 'count')
 
 p9 <- ggplot(aes(x = volatile.acidity), data = wine) +
@@ -81,6 +82,7 @@ p10 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) +
   geom_histogram(stat = 'count')
 
 p11 <- ggplot(aes(x = chlorides), data = wine) +
+  scale_x_continuous(limits = c(0,0.2), breaks = seq(0,0.2,0.01)) +
   geom_histogram(stat = 'count')
 
 p12 <- ggplot(aes(x = residual.sugar), data = wine) +
