@@ -119,6 +119,33 @@ grid.arrange(p9, p10, p11, p12, ncol = 2)
 ####################################################
 ```
 
+### So, we need to transform the variables which do not look normal or close to. We can use the log10
+```{r}
+t1 <- ggplot(aes(x = sulphates), data = wine) +
+  geom_histogram(stat = 'count', color = 'black', fill = 'grey') +
+  scale_x_log10()
+
+t2 <- ggplot(aes(x = total.sulfur.dioxide), data = wine) +
+  scale_x_continuous(limits = c(0,170), breaks = seq(0,170,5)) +
+  geom_histogram(stat = 'count', color = 'black', fill = 'grey') +
+  scale_x_log10()
+
+t3 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) +
+  geom_histogram(stat = 'count', color = 'black', fill = 'grey') +
+  scale_x_log10()
+
+t4 <- ggplot(aes(x = chlorides), data = wine) +
+  scale_x_continuous(limits = c(0,0.2), breaks = seq(0,0.2,0.01)) +
+  geom_histogram(stat = 'count', color = 'black', fill = 'grey') +
+  scale_x_log10()
+
+t5 <- ggplot(aes(x = residual.sugar), data = wine) +
+  geom_histogram(stat = 'count', color = 'black', fill = 'grey') +
+  scale_x_log10()
+
+grid.arrange(t1, t2, t3, t4, t5, ncol = 2)
+```
+
 
 ### let's define levels for quality of wine
 ```{r}

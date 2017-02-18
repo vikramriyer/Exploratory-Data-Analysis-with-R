@@ -52,7 +52,8 @@ head(red_wine$residual.sugar)
 ggplot(aes(x = residual.sugar), data = red_wine, bins = 160, binwidth = 0.1) +
   geom_histogram(color = 'black', fill = 'grey') +
   geom_line(color = 'green', stat = 'count') +
-  scale_x_continuous(limits = c(0, 16),breaks = seq(0,16,1))
+  scale_x_continuous(limits = c(0, 16),breaks = seq(0,16,1)) +
+  scale_x_log10()
 ```
 
 ```{r}
@@ -60,10 +61,10 @@ names(red_wine)
 
 ggplot(aes(x = chlorides), data = red_wine) +#, bins = 160, binwidth = 0.1) +
   geom_histogram(color = 'black', fill = 'grey') +
-  geom_line(color = 'green', stat = 'count') #+
+  geom_line(color = 'green', stat = 'count') +
+  scale_x_log10()
+  #+
   #scale_x_continuous(limits = c(0, 16),breaks = seq(0,16,1))
-
-
 ```
 
 ```{r}
@@ -74,7 +75,9 @@ head(red_wine$total.sulfur.dioxide)
 summary(red_wine$total.sulfur.dioxide)
 
 ggplot(aes(x = total.sulfur.dioxide), data = red_wine) +
-  geom_histogram(color = 'black', fill = 'grey')
+  geom_histogram(color = 'black', fill = 'grey') +
+  scale_x_log10() +
+  geom_line(stat = 'count')
 ```
 
 
