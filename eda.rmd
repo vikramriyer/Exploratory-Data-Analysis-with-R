@@ -66,7 +66,7 @@ p5 <- ggplot(aes(x = fixed.acidity), data = wine) +
   geom_histogram(stat = 'count', color = 'black', fill = 'grey')
 
 p6 <- ggplot(aes(x = density), data = wine) +
-  geom_histogram(stat = 'count', color = 'black', fill = 'grey')
+  geom_histogram(color = 'black', fill = 'grey')
 
 p7 <- ggplot(aes(x = pH), data = wine) +
   geom_histogram(stat = 'count', color = 'black', fill = 'grey')
@@ -92,17 +92,33 @@ p12 <- ggplot(aes(x = residual.sugar), data = wine) +
 ```{r}
 grid.arrange(p1, p2, p3, p4, ncol = 2)
 ## w.r.t the plots below we can conclude that, 
-# quality, suphates => have normal or close to normal distribution 
+# quality, suphates => have normal or close to normal distribution
+# citric.acid => does not
 ```
 
 ```{r}
 grid.arrange(p5, p6, p7, p8, ncol = 2)
+# density, fixed.acidity, pH => have normal distributions
 ```
 
 
 ```{r}
 grid.arrange(p9, p10, p11, p12, ncol = 2)
 ```
+## Variables having normal and not having normal distributions
+```{r}
+####################################################
+#        Normal         |       Not Normal         #
+####################################################
+# 1. alcohol            | citric.acid              #
+# 2. fixed.acidity      | residual.sugar           #
+# 3. volatile.acidity   | chlorides                #
+# 4. density            | free.sulphur.dioxide     #
+# 5. pH                 | total.sulphur.dioxide    #
+# 6. quality            | sulphates                #
+####################################################
+```
+
 
 ### let's define levels for quality of wine
 ```{r}
