@@ -1,0 +1,85 @@
+---
+title: "explore data"
+author: "vikram"
+date: "18 February 2017"
+output: html_document
+---
+
+```{r}
+suppressPackageStartupMessages(library(ggplot2))
+red_wine = read.csv("/home/vikram.iyer/vikram-code-school/ND/P4/datasets/wineQualityReds.csv")
+names(red_wine)
+
+#fixed acidity
+head(red_wine$fixed.acidity, 15)
+summary(red_wine$fixed.acidity)
+ggplot(aes(x = fixed.acidity), data = red_wine, binwidth = 0.1, bins = (15.9 - 4.6) * 10) +
+  geom_histogram(stat = 'count', color = 'black', fill = 'grey') +
+  scale_x_continuous(limits = c(4.6, 15.9), breaks = seq(4.6, 15.9, 1)) +
+  scale_y_continuous(breaks = seq(0, 70, 10)) 
+red_wine[red_wine$fixed.acidity == 5,]
+```
+
+
+
+```{r}
+names(red_wine)
+
+# volatile.acidity
+ggplot(aes(x = volatile.acidity), data = red_wine, binwidth = .1, bins = 17) +
+  geom_histogram(color = 'black', fill = 'grey') +
+  scale_x_continuous(limits = c(0, 1.6), breaks = seq(0, 1.6, .1)) +
+  scale_y_continuous(limits = c(0, 225), breaks = seq(0, 225, 25))
+```
+
+```{r}
+names(red_wine)
+
+## citric.acid
+head(red_wine$citric.acid, 20)
+summary(red_wine$citric.acid)
+
+ggplot(aes(x = citric.acid), data = red_wine, bins = 100, binwidth = 0.01) +
+  geom_histogram(stat = 'count') +
+  scale_x_continuous(breaks = seq(0,1,0.05)) +
+  geom_line(color = 'green', stat = 'count')
+```
+
+```{r}
+names(red_wine)
+summary(red_wine$residual.sugar)
+head(red_wine$residual.sugar)
+ggplot(aes(x = residual.sugar), data = red_wine, bins = 160, binwidth = 0.1) +
+  geom_histogram(color = 'black', fill = 'grey') +
+  geom_line(color = 'green', stat = 'count') +
+  scale_x_continuous(limits = c(0, 16),breaks = seq(0,16,1))
+```
+
+```{r}
+names(red_wine)
+
+ggplot(aes(x = chlorides), data = red_wine) +#, bins = 160, binwidth = 0.1) +
+  geom_histogram(color = 'black', fill = 'grey') +
+  geom_line(color = 'green', stat = 'count') #+
+  #scale_x_continuous(limits = c(0, 16),breaks = seq(0,16,1))
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
