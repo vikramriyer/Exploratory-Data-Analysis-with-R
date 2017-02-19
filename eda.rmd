@@ -157,10 +157,7 @@ levels(wine$quality.asFactor)
 low <- wine$quality <= 4
 medium <- wine$quality > 4 & wine$quality < 7
 high <- wine$quality > 6
-wine$quality.category <- factor(ifelse(low, 'low', ifelse(medium, 'medium', 'high')))
-```
-
-```{r}
+wine$quality.category <- factor(ifelse(low, 'low', ifelse(medium, 'medium', 'high')), levels = c("low", "medium", "high"))
 levels(wine$quality.category)
 ```
 
@@ -168,9 +165,57 @@ levels(wine$quality.category)
 
 # Let's start by plotting a simple graph
 ```{r}
-ggplot(aes(x = quality, y = pH), data = wine) +
-  geom_point()
+names(wine)
+ggplot(aes(x = quality.category, y = alcohol), data = wine) +
+  geom_boxplot()
+## higher the content of alcohol, better the quality
 ```
+### Let's draw plots for all variables against quality of red wine and analyze which variable has a relation(positive, negative, no relation) with quality of red wine
+```{r}
+names(wine)
+b1 <- ggplot(aes(x = quality.category, y = alcohol), data = wine) +
+  geom_boxplot()
+b2 <- ggplot(aes(x = quality.category, y = citric.acid), data = wine) +
+  geom_boxplot()
+b3 <- ggplot(aes(x = quality.category, y = sulphates), data = wine) +
+  geom_boxplot()
+b4 <- ggplot(aes(x = quality.category, y = fixed.acidity), data = wine) +
+  geom_boxplot()
+grid.arrange(b1, b2, b3, b4, ncol = 2)
+```
+
+#### Conclusion: The above factors depict that, they are directly proportional to quality of red wine, i.e. higher the factor, better the quality
+
+###Let's check the remaining ones
+```{r}
+b5 <- ggplot(aes(x = quality.category, y = pH), data = wine) +
+  geom_boxplot()
+b6 <- ggplot(aes(x = quality.category, y = density), data = wine) +
+  geom_boxplot()
+b7 <- ggplot(aes(x = quality.category, y = volatile.acidity), data = wine) +
+  geom_boxplot()
+grid.arrange(b5, b6, b7, ncol = 2)
+```
+
+#### Conclusion: The above factors denote that, they are inversely proportional to quality of red wine, i.e. lower the factor, better the quality
+
+### Let's try to find a overview of all the variables using the ggpairs function
+```{r}
+suppressPackageStartupMessages(library(GGally))
+names(wine)
+ggpairs(wine, columns = 2:13, title = 'bivariate red wine analysis')
+```
+
+
+```{r}
+## timepass
+ggplot(aes(x=alcohol,y=density),data=wine)+
+  geom_point(aes(color=wine$quality.category, alpha=1/10))+
+  geom_vline(aes(xintercept = 11),linetype="longdash")+geom_smooth(method = "lm")+
+  xlab("alcohol %")
+names(wine)
+```
+
 
 ```{r}
 ggplot(aes(x = quality, y = pH), data = wine) +
@@ -186,6 +231,7 @@ summary(wine$quality)
 ### And it turns out that, generally, wine has pH range between 2.9 to 3.9. Let's verify if this is true in our dataset
 
 ```{r}
+length(wine$X)
 length(wine$pH[wine$pH > 2.9 & wine$pH < 3.9])
 ```
 
