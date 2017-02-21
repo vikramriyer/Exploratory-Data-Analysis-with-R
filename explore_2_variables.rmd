@@ -5,10 +5,6 @@ date: "26 January 2017"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 ## qplot vs ggplot syntax
 ```{r}
 pf = read.csv('/home/vikram.iyer/vikram-code-school/ND/P4/datasets/pseudo_facebook.tsv', sep = '\t', header = TRUE)
