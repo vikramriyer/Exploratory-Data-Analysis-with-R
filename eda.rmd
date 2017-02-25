@@ -1,60 +1,61 @@
+---
+title: Exploratory Data Analysis - Red Wine Quality
+author: Vikram Iyer
+output: html_document
+---
 ```{r}
 # use wineQualityReds.csv for the dataset
 # use the Redirecting.txt to read about the dataset
 ```
 
-# Familiarize with data
+#Familiarize with data
 ```{r}
 # Load data
-wine = read.csv('/data/myhome/vikram-code-school/ND/P4/datasets/wineQualityReds.csv')
-#wine = read.csv('../datasets/wineQualityReds.csv')
+wine <- read.csv('/data/myhome/vikram-code-school/ND/P4/datasets/wineQualityReds.csv')
+#wine <- read.csv('../datasets/wineQualityReds.csv')
 names(wine)
 ```
 
-# summary of the data
 ```{r}
 summary(wine)
 ```
 
-# chunk of data
 ```{r}
 head(wine)
 ```
 
-# Total observations and fields
 ```{r}
 dim(wine)
 ```
 
-# structure of the dataset
 ```{r}
 str(wine)
 ```
 
 ```{r}
 suppressPackageStartupMessages(library(ggplot2))
-suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(gridExtra))
+suppressWarnings(library(ggplot2))
+suppressWarnings(library(gridExtra))
 ```
 
 #Univariate Analysis
 
-##By looking at the values of the quality we can say that it has a range that is absolute. Hence, we can convert into factor and check if we cab obtains levels
-
 ```{r}
-wine$quality.asFactor <- factor(wine$quality)
+# Let's see how quality of a wine is measured
+levels(wine$quality)
 
-levels(wine$quality.asFactor)
+# Let's convert the quality to factor
+wine$quality.as_factor <- factor(wine$quality)
+
+levels(wine$quality.as_factor)
 ```
 
-##Let's plot all the variables and view them from under the hood of univariate
 ```{r}
-
-
-p1 <- ggplot(aes(x = quality.asFactor), data = wine) +
+p1 <- ggplot(aes(x = quality.as_factor), data = wine) +
   geom_histogram(stat = 'count', color = 'black', fill = 'grey')
 
-p2 <- ggplot(aes(x = citric.acid), data = wine) +
+p2 <- ggplot(aes(x = citric.acid), data = wine, binwidth = 0.01) +
   geom_histogram(stat = 'count', color = 'black', fill = 'grey')
 
 p3 <- ggplot(aes(x = alcohol), data = wine) +
@@ -63,7 +64,7 @@ p3 <- ggplot(aes(x = alcohol), data = wine) +
 p4 <- ggplot(aes(x = sulphates), data = wine) +
   geom_histogram(stat = 'count', color = 'black', fill = 'grey')
 
-p5 <- ggplot(aes(x = fixed.acidity), data = wine) +
+p5 <- ggplot(aes(x = fixed.acidity), data = wine, binwidth = 0.1) +
   geom_histogram(stat = 'count', color = 'black', fill = 'grey')
 
 p6 <- ggplot(aes(x = density), data = wine) +
@@ -76,7 +77,7 @@ p8 <- ggplot(aes(x = total.sulfur.dioxide), data = wine) +
   scale_x_continuous(limits = c(0,170), breaks = seq(0,170,5)) +
   geom_histogram(stat = 'count', color = 'black', fill = 'grey')
 
-p9 <- ggplot(aes(x = volatile.acidity), data = wine) +
+p9 <- ggplot(aes(x = volatile.acidity), data = wine, binwidth = 0.01) +
   geom_histogram(stat = 'count', color = 'black', fill = 'grey')
 
 p10 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) +
@@ -88,25 +89,22 @@ p11 <- ggplot(aes(x = chlorides), data = wine) +
 
 p12 <- ggplot(aes(x = residual.sugar), data = wine) +
   geom_histogram(stat = 'count', color = 'black', fill = 'grey')
+p1
 ```
 
 ```{r}
 grid.arrange(p1, p2, p3, p4, ncol = 2)
-## w.r.t the plots below we can conclude that, 
-# quality, suphates => have normal or close to normal distribution
-# citric.acid => does not
 ```
 
 ```{r}
 grid.arrange(p5, p6, p7, p8, ncol = 2)
-# density, fixed.acidity, pH => have normal distributions
 ```
-
 
 ```{r}
 grid.arrange(p9, p10, p11, p12, ncol = 2)
 ```
-## Variables having normal and not having normal distributions
+
+####Variables having normal and not having normal distributions
 ```{r}
 ####################################################
 #        Normal         |       Not Normal         #
@@ -116,11 +114,11 @@ grid.arrange(p9, p10, p11, p12, ncol = 2)
 # 3. volatile.acidity   | chlorides                #
 # 4. density            | free.sulphur.dioxide     #
 # 5. pH                 | total.sulphur.dioxide    #
-# 6. quality            | sulphates                #
+#                       | sulphates                #
 ####################################################
 ```
 
-### So, we need to transform the variables which do not look normal or close to. We can use the log10
+####So, we need to transform the variables which do not look normal or close to. We can use the log10
 ```{r}
 t1 <- ggplot(aes(x = sulphates), data = wine) +
   geom_histogram(stat = 'count', color = 'black', fill = 'grey') +
@@ -146,30 +144,25 @@ t5 <- ggplot(aes(x = residual.sugar), data = wine) +
 grid.arrange(t1, t2, t3, t4, t5, ncol = 2)
 ```
 
-
-### let's define levels for quality of wine
+####Let's further classify quality of wine into 3 ordinal variables: low(3,4), medium(5,6), best(7,8)
 ```{r}
-levels(wine$quality.asFactor)
-```
-
-```{r}
-# let's further classify them into 3 ordinal variables: low(3,4), medium(5,6), high(7,8)
 low <- wine$quality <= 4
 medium <- wine$quality > 4 & wine$quality < 7
 best <- wine$quality > 6
-wine$quality.category <- factor(ifelse(low, 'low quality', ifelse(medium, 'medium quality', 'best quality')), levels = c("low quality", "medium quality", "best quality"))
+wine$quality.category <- factor(ifelse(low, 'low', ifelse(medium, 'medium', 'best')), levels = c("low", "medium", "best"))
 levels(wine$quality.category)
 ```
 
-## BiVariate Analysis: Comparing each of the attributes/compounds of wine with quality and coming to conclusions
-# Let's start by plotting a simple graph
+#BiVariate Analysis
+####Comparing each of the attributes/compounds of wine with quality and coming to conclusions
 ```{r}
 names(wine)
 ggplot(aes(x = quality.category, y = alcohol), data = wine) +
   geom_boxplot()
 ## higher the content of alcohol, better the quality
 ```
-### Let's draw plots for all variables against quality of red wine and analyze which variable has a relation(positive, negative, no relation) with quality of red wine
+
+####Let's draw plots for all variables against quality of red wine and analyze which variable has a relation(positive, negative, no relation) with quality of red wine
 ```{r}
 names(wine)
 b1 <- ggplot(aes(x = quality.category, y = alcohol), data = wine) +
@@ -183,9 +176,9 @@ b4 <- ggplot(aes(x = quality.category, y = fixed.acidity), data = wine) +
 grid.arrange(b1, b2, b3, b4, ncol = 2)
 ```
 
-#### Conclusion: The above factors depict that, they are directly proportional to quality of red wine, i.e. higher the factor, better the quality
+####*Conclusion*: The above factors depict that, they are directly proportional to quality of red wine, i.e. higher the factor, better the quality
 
-###Let's check the remaining ones
+####Let's check the remaining ones
 ```{r}
 b5 <- ggplot(aes(x = quality.category, y = pH), data = wine) +
   geom_boxplot(fill="red")
@@ -196,92 +189,98 @@ b7 <- ggplot(aes(x = quality.category, y = volatile.acidity), data = wine) +
 grid.arrange(b5, b6, b7, ncol = 2)
 ```
 
-#### Conclusion: The above factors denote that, they are inversely proportional to quality of red wine, i.e. lower the factor, better the quality
+####*Conclusion*: The above factors denote that, they are inversely proportional to quality of red wine, i.e. lower the factor, better the quality
 
-### Let's try to find a overview of all the variables using the ggpairs function
+####Let's try to find a overview of all the variables using the ggpairs function
 ```{r}
 suppressPackageStartupMessages(library(GGally))
-names(wine)
-ggpairs(wine, columns = 2:13, title = 'bivariate red wine analysis')
+suppressWarnings(library(GGally))
+
+my_fn <- function(data, mapping, method = 'lm'){
+  plot <- ggplot(data = data, mapping = mapping) +
+  geom_point() +
+  geom_smooth(method = method)
+  plot
+}
+
+ggpairs(wine, columns = 2:13, title = 'bivariate red wine analysis', lower = list(continuous = my_fn))
 ```
-```{r}
-# Now, the above figure is not very clear. Howerver. I have attached a screenshot by using the rbasic app which gave a clearer picture of the same above pic
-# You can view it here: https://github.com/vikramriyer/Exploratory-Data-Analysis-with-R/blob/master/rstudio_ggpairs_clear_shot.png
-# Conclusions: Some variables which should be checked for corelations are listed below: (some samples)
-# Criteria for picking the variables for futher analysis, the corelation coefficient > 0.5 or coefficient < -0.5
-# 1. fixed.acidity with density, pH, citric.acid
-# 2. volatile.acidity with citric.acid
-# 3. citric.acid with pH
-# 4. residual.sugar with density
-# 5. density with pH, alcohol
-```
+####Now, the above figure is not very clear. Howerver. I have attached a screenshot by using the rbasic app which gave a clearer picture of the same above pic
+####You can view it here: https://github.com/vikramriyer/Exploratory-Data-Analysis-with-R/blob/master/rstudio_ggpairs_clear_shot.png
+####*Conclusions*: Some variables which should be checked for corelations are plotted below: (some samples)
+####Criteria for picking the variables for futher analysis, the corelation coefficient > 0.5 or coefficient < -0.5
 
 
-## Multivariate Analysis
+#Final plots (Multivariate Analysis)
 ```{r}
 # fixed.acidity vs density
 ggplot(aes(x = fixed.acidity, y = density), data = wine) +
   geom_point(aes(color = quality.category, aplha = 1/5)) +
-  geom_smooth(method = 'lm', color = 'red', alpha = 1/5)
+  geom_smooth(method = 'lm', color = 'red') +
+  ggtitle('fixed.acidity vs density') +
+  theme(plot.title = element_text(face="bold"))
 ```
-#### The above plot clearly shows that, there is a positive corelation between density and fixed.acidity in determining the quality of wine
+####The above plot clearly shows that, there is a positive corelation between density and fixed.acidity in determining the quality of wine
 
 ```{r}
 # fixed.acidity with pH
 ggplot(aes(x = fixed.acidity, y = pH), data = wine) +
   geom_point(aes(color = quality.category, aplha = 1/10)) +
-  geom_smooth(method = 'lm', color = 'red', alpha = 1/10)
+  geom_smooth(method = 'lm', color = 'red') +
+  ggtitle('fixed.acidity vs pH') +
+  theme(plot.title = element_text(face="bold"))
 ```
-#### The above plot denotes that, higher the pH and lower the fixed.acidity, better the quality of wine
-#### Note: It should also be noted that, the pH value is mostly in the range of 3 to 4
+####The above plot denotes that, higher the pH and lower the fixed.acidity, better the quality of wine
+####*Note*: It should also be noted that, the pH value is mostly in the range of 3 to 4
+
 ```{r}
 paste(round(length(wine$pH[wine$pH < 4 & wine$pH > 3])/length(wine$pH)*100), '%')
 ```
-#### So, out of the total 1599 observations, approximately 98% observations have pH value in the range 3-4
+####So, out of the total 1599 observations, approximately 98% observations have pH value in the range 3-4
 
 ```{r}
 # fixed.acidity with citric.acid
 ggplot(aes(x = fixed.acidity, y = citric.acid), data = wine) +
   geom_point(aes(color = quality.category, aplha = 1/5)) +
-  geom_smooth(method = 'lm', color = 'red', alpha = 1/5)
+  geom_smooth(method = 'lm', color = 'red') +
+  ggtitle('fixed.acidity vs citric.acid') +
+  theme(plot.title = element_text(face="bold"))
 ```
-#### Let's just verify if the above plot is uniform across all the levels of quality since I can see a lot of red dots below the corelation slope
+####Let's just verify if the above plot is uniform across all the levels of quality since I can see a lot of red dots below the corelation slope
 
 ```{r}
 ggplot(aes(x = fixed.acidity, y = citric.acid), data = wine) +
   facet_wrap(~quality.category) +
   geom_point(aes(color = quality.category, aplha = 1/5)) +
-  geom_smooth(method = 'lm', color = 'red', alpha = 1/5)
+  geom_smooth(method = 'lm', color = 'red') +
+  ggtitle('fixed.acidity vs citric.acid faceted by quality') +
+  theme(plot.title = element_text(face="bold"))
 ```
-#### As we can see above the slope in the initial plot was correct and the relation is positive, i.e. for higher values of citric acid and fixed acidity, the perceived quality of wine is better
+####As we can see above the slope in the initial plot was correct and the relation is positive, i.e. for higher values of citric acid and fixed acidity, the perceived quality of wine is better
 
 ```{r}
 # density with alcohol
-ggplot(aes(x = density, y = alcohol), data = wine) +
-  geom_point(aes(color = quality.category, aplha = 1/5)) +
-  geom_smooth(method = 'lm', color = 'red', alpha = 1/5)
-```
-
-
-```{r}
-## timepass
-ggplot(aes(x=alcohol,y=density),data=wine)+
+ggplot(aes(x = alcohol,y = density), data=wine)+
   geom_point(aes(color=wine$quality.category, alpha=1/10))+
-  geom_vline(aes(xintercept = 11),linetype="longdash")+geom_smooth(method = "lm")+
-  xlab("alcohol %")
+  geom_smooth(method = "lm", color = 'red') +
+  xlab("alcohol %") +
+  ggtitle('density vs alcohol') +
+  theme(plot.title = element_text(face="bold"))
 ```
 
-# Reflection
-### While I was plotting the graphs, I had to check each data point with every other. This dataset was very small and I purposefully missed out on some plots as the code would ### be similar and only the fields would require to be changed. But, when dealing with large datasets and working on real world business problems, even the slightest of
-### mistake or wrong assumption may cost big. So, to reduce this manual work, we should be depending more on robust machine learning models for prediction about each and
-### every data point.
+#Reflection
+####While I was plotting the graphs, I had to check each data field with every other one. This dataset was fairly small; however, when dealing with large datasets, not even a single aspect should be missed i.e. considering each and every case and analysis about them. Using the methods done above, there is a lot of manual work. To reduce this manual work, we should be depending more on robust machine learning models for prediction about various permutations and combinations of dataset.
 
-# Conclusion
-### EDA is perhaps the best tool to undestand the data and feel it. It is useful when you want to visualize data even before thinking of models and writing code.
-### However, it may have some limitations since it depends on the collected data (i.e. sample) and hence more data may result in changes in the conclusion about the dependent
-### and independent variables
+#Conclusion
+####EDA is perhaps the best tool to undestand the data and feel it. It is useful when you want to visualize data even before thinking of models and writing code. However, it may have some limitations since it depends on the collected data (i.e. sample) and hence more data may result in changes in the conclusion about the dependent and independent variables
 
-# References:
-#### ref link 1: https://en.wikipedia.org/wiki/Acids_in_wine
-#### ref link 2:
-#### ref link 3:
+#References:
+[Acids in Wine](https://en.wikipedia.org/wiki/Acids_in_wine)
+
+[ROC curves](http://blog.yhat.com/posts/roc-curves.html)
+
+[Rgraphics](http://tutorials.iq.harvard.edu/R/Rgraphics/Rgraphics.html)
+
+[Error](http://stackoverflow.com/questions/27207963/arrange-not-working-on-grouped-data-frame)
+
+[Penn State Analysis](https://onlinecourses.science.psu.edu/stat857/node/4)
