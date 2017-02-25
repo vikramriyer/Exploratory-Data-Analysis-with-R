@@ -6,7 +6,7 @@
 # Familiarize with data
 ```{r}
 # Load data
-wine = read.csv('/home/vikram.iyer/vikram-code-school/ND/P4/datasets/wineQualityReds.csv')
+wine = read.csv('/data/myhome/vikram-code-school/ND/P4/datasets/wineQualityReds.csv')
 names(wine)
 ```
 
@@ -161,26 +161,25 @@ wine$quality.category <- factor(ifelse(low, 'low', ifelse(medium, 'medium', 'hig
 levels(wine$quality.category)
 ```
 
-## BiVariate Analysis
-
+## BiVariate Analysis: Comparing each of the attributes/compounds of wine with quality and coming to conclusions
 # Let's start by plotting a simple graph
 ```{r}
 names(wine)
 ggplot(aes(x = quality.category, y = alcohol), data = wine) +
-  geom_boxplot()
+  geom_boxplot(fill="green")
 ## higher the content of alcohol, better the quality
 ```
 ### Let's draw plots for all variables against quality of red wine and analyze which variable has a relation(positive, negative, no relation) with quality of red wine
 ```{r}
 names(wine)
 b1 <- ggplot(aes(x = quality.category, y = alcohol), data = wine) +
-  geom_boxplot()
+  geom_boxplot(fill="green")
 b2 <- ggplot(aes(x = quality.category, y = citric.acid), data = wine) +
-  geom_boxplot()
+  geom_boxplot(fill="green")
 b3 <- ggplot(aes(x = quality.category, y = sulphates), data = wine) +
-  geom_boxplot()
+  geom_boxplot(fill="green")
 b4 <- ggplot(aes(x = quality.category, y = fixed.acidity), data = wine) +
-  geom_boxplot()
+  geom_boxplot(fill="green")
 grid.arrange(b1, b2, b3, b4, ncol = 2)
 ```
 
@@ -189,11 +188,11 @@ grid.arrange(b1, b2, b3, b4, ncol = 2)
 ###Let's check the remaining ones
 ```{r}
 b5 <- ggplot(aes(x = quality.category, y = pH), data = wine) +
-  geom_boxplot()
+  geom_boxplot(fill="red")
 b6 <- ggplot(aes(x = quality.category, y = density), data = wine) +
-  geom_boxplot()
+  geom_boxplot(fill="red")
 b7 <- ggplot(aes(x = quality.category, y = volatile.acidity), data = wine) +
-  geom_boxplot()
+  geom_boxplot(fill="red")
 grid.arrange(b5, b6, b7, ncol = 2)
 ```
 
