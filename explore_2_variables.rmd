@@ -22,19 +22,19 @@ ggplot(aes(x = age, y = friend_count), data = pf) + # aesthetic wrapper is neces
 ```
 
 ```{r}
-## Since the lower area is densely populated, we are unable to see the points carefully
+## We can see some discreteness in age, and hence we will set alpha = 1/10 which means, to get each of the point, 10 points will be required
+## This will help in fading the graph and hence making the dense part more visible
 ggplot(aes(x = age, y = friend_count), data = pf) +
-  geom_point(alpha = 1/20) +
+  geom_point(alpha = 1/10) +
   xlim(13,90)
 
-## THis looks a tad bit better, however, we still do not get a feel of the distribution
-## Let's try adding some change
+## The same can be performed using a geom_jitter as well
 ```
 ```{r}
 ggplot(aes(x = age, y = friend_count), data = pf) +
-  geom_jitter(alpha = 1/20) +
+  geom_jitter(alpha = 1/10) +
   xlim(13,90)
-## Aha, this gives a better view of the distribution :)
+## This makes the distribution look clearer
 ```
 
 ```{r}
@@ -45,11 +45,11 @@ ggplot(aes(x = age, y = friend_count), data = pf) +
 ```
 
 ```{r}
-## To use jitter with the above plot, there is a more advanced syntax and it is as below, which given a better view of the plot
+## To use jitter with the above plot, there is a more advanced syntax and it is as below, which gives a better view of the plot
 ## h = 0, ensures that there are no negative points since some people have a friend count of 0, a min acceptable height is 0,
 ## jitter actually adds positive or negative noise to the points and thus, it may add negative for 0 friend count users
 ggplot(aes(x = age, y = friend_count), data = pf) +
-  geom_jitter(alpha = 1/20, position = position_jitter(h = 0)) +
+  geom_point(alpha = 1/20, position = position_jitter(h = 0)) +
   xlim(13,90) +
   coord_trans(y = 'sqrt')
 ```
@@ -65,20 +65,22 @@ ggplot(aes(x = age, y = friendships_initiated), data = pf) +
 by(pf$friendships_initiated, pf$age, summary) # This will give a count of friendships initiated at every age in the dataset
 
 # Let's break down the plot into various ages
-ggplot(aes(x = age, y = friendships_initiated), data = pf) +
+p1 <- ggplot(aes(x = age, y = friendships_initiated), data = pf) +
   geom_jitter(alpha = 1/20, position = position_jitter(h = 0)) +
   xlim(13,30) +
   coord_trans(y = 'sqrt')
 
-ggplot(aes(x = age, y = friendships_initiated), data = pf) +
+p2 <- ggplot(aes(x = age, y = friendships_initiated), data = pf) +
   geom_jitter(alpha = 1/20, position = position_jitter(h = 0)) +
   xlim(31,50) +
   coord_trans(y = 'sqrt')
 
-ggplot(aes(x = age, y = friendships_initiated), data = pf) +
+p3 <- ggplot(aes(x = age, y = friendships_initiated), data = pf) +
   geom_jitter(alpha = 1/20, position = position_jitter(h = 0)) +
   xlim(50,90) +
   coord_trans(y = 'sqrt')
+
+ggpairs.arrange(p1, p2, p3, ncol = 2)
 ```
 
 ## Conditional means
