@@ -12,7 +12,6 @@ output: html_document
 ```{r}
 # Load data
 wine <- read.csv('/data/myhome/vikram-code-school/ND/P4/datasets/wineQualityReds.csv')
-#wine <- read.csv('../datasets/wineQualityReds.csv')
 names(wine)
 ```
 
@@ -215,7 +214,7 @@ ggpairs(wine, columns = 2:13, title = 'bivariate red wine analysis', lower = lis
 ```{r}
 # fixed.acidity vs density
 ggplot(aes(x = fixed.acidity, y = density), data = wine) +
-  geom_point(aes(color = quality.category, aplha = 1/5)) +
+  geom_point(aes(color = quality.category, alpha = 1/5)) +
   geom_smooth(method = 'lm', color = 'red') +
   ggtitle('fixed.acidity vs density') +
   theme(plot.title = element_text(face="bold"))
@@ -225,7 +224,7 @@ ggplot(aes(x = fixed.acidity, y = density), data = wine) +
 ```{r}
 # fixed.acidity with pH
 ggplot(aes(x = fixed.acidity, y = pH), data = wine) +
-  geom_point(aes(color = quality.category, aplha = 1/10)) +
+  geom_point(aes(color = quality.category)) +
   geom_smooth(method = 'lm', color = 'red') +
   ggtitle('fixed.acidity vs pH') +
   theme(plot.title = element_text(face="bold"))
@@ -241,7 +240,7 @@ paste(round(length(wine$pH[wine$pH < 4 & wine$pH > 3])/length(wine$pH)*100), '%'
 ```{r}
 # fixed.acidity with citric.acid
 ggplot(aes(x = fixed.acidity, y = citric.acid), data = wine) +
-  geom_point(aes(color = quality.category, aplha = 1/5)) +
+  geom_point(aes(color = quality.category)) +
   geom_smooth(method = 'lm', color = 'red') +
   ggtitle('fixed.acidity vs citric.acid') +
   theme(plot.title = element_text(face="bold"))
@@ -251,7 +250,7 @@ ggplot(aes(x = fixed.acidity, y = citric.acid), data = wine) +
 ```{r}
 ggplot(aes(x = fixed.acidity, y = citric.acid), data = wine) +
   facet_wrap(~quality.category) +
-  geom_point(aes(color = quality.category, aplha = 1/5)) +
+  geom_point(aes(color = quality.category)) +
   geom_smooth(method = 'lm', color = 'red') +
   ggtitle('fixed.acidity vs citric.acid faceted by quality') +
   theme(plot.title = element_text(face="bold"))
@@ -261,7 +260,7 @@ ggplot(aes(x = fixed.acidity, y = citric.acid), data = wine) +
 ```{r}
 # density with alcohol
 ggplot(aes(x = alcohol,y = density), data=wine)+
-  geom_point(aes(color=wine$quality.category, alpha=1/10))+
+  geom_point(aes(color=wine$quality.category))+
   geom_smooth(method = "lm", color = 'red') +
   xlab("alcohol %") +
   ggtitle('density vs alcohol') +
