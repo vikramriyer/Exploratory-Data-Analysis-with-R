@@ -3,7 +3,8 @@ title: Exploratory Data Analysis - Red Wine Quality
 author: Vikram Iyer
 output: html_document
 ---
-```{r}
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
 # use wineQualityReds.csv for the dataset
 # use the Redirecting.txt to read about the dataset
 ```
@@ -12,6 +13,11 @@ output: html_document
 ```{r}
 # Load data
 wine <- read.csv('/data/myhome/vikram-code-school/ND/P4/datasets/wineQualityReds.csv')
+
+#import required packages
+library(ggplot2)
+library(gridExtra)
+library(GGally)
 names(wine)
 ```
 
@@ -31,16 +37,12 @@ dim(wine)
 str(wine)
 ```
 
-```{r}
-suppressPackageStartupMessages(library(ggplot2))
-suppressPackageStartupMessages(library(gridExtra))
-suppressWarnings(library(ggplot2))
-suppressWarnings(library(gridExtra))
-```
-
 #Univariate Analysis
 
 ```{r}
+#The variable 'X' in the dataframe is just the index and we wont be using it throughout the exploration, let's get rid of it.
+wine$X <- NULL
+
 # Let's see how quality of a wine is measured
 levels(wine$quality)
 
@@ -51,8 +53,8 @@ levels(wine$quality.as_factor)
 ```
 
 ```{r}
-p1 <- ggplot(aes(x = quality.as_factor), data = wine) +
-  geom_histogram(stat = 'count', color = 'black', fill = 'grey')
+p1 <- ggplot(aes(x = quality), data = wine) +
+  geom_bar(stat = 'count', color = 'black', fill = 'grey')
 
 p2 <- ggplot(aes(x = citric.acid), data = wine, binwidth = 0.01) +
   geom_histogram(stat = 'count', color = 'black', fill = 'grey')
@@ -88,7 +90,7 @@ p11 <- ggplot(aes(x = chlorides), data = wine) +
 
 p12 <- ggplot(aes(x = residual.sugar), data = wine) +
   geom_histogram(stat = 'count', color = 'black', fill = 'grey')
-p1
+
 ```
 
 ```{r}
@@ -148,7 +150,8 @@ grid.arrange(t1, t2, t3, t4, t5, ncol = 2)
 low <- wine$quality <= 4
 medium <- wine$quality > 4 & wine$quality < 7
 best <- wine$quality > 6
-wine$quality.category <- factor(ifelse(low, 'low', ifelse(medium, 'medium', 'best')), levels = c("low", "medium", "best"))
+wine$quality.category <- factor(ifelse(low, 'low', ifelse(medium, 'medium', 'best')), 
+                                levels = c("low", "medium", "best"))
 levels(wine$quality.category)
 ```
 
@@ -191,10 +194,7 @@ grid.arrange(b5, b6, b7, ncol = 2)
 ####*Conclusion*: The above factors denote that, they are inversely proportional to quality of red wine, i.e. lower the factor, better the quality
 
 ####Let's try to find a overview of all the variables using the ggpairs function
-```{r}
-suppressPackageStartupMessages(library(GGally))
-suppressWarnings(library(GGally))
-
+```{r  fig.width=16, fig.height=16 }
 my_fn <- function(data, mapping, method = 'lm'){
   plot <- ggplot(data = data, mapping = mapping) +
   geom_point() +
@@ -202,7 +202,8 @@ my_fn <- function(data, mapping, method = 'lm'){
   plot
 }
 
-ggpairs(wine, columns = 2:13, title = 'bivariate red wine analysis', lower = list(continuous = my_fn))
+ggpairs(wine, title = 'bivariate red wine analysis', 
+        lower = list(continuous = my_fn))
 ```
 ####Now, the above figure is not very clear. Howerver. I have attached a screenshot by using the rbasic app which gave a clearer picture of the same above pic
 ####You can view it here: https://github.com/vikramriyer/Exploratory-Data-Analysis-with-R/blob/master/rstudio_ggpairs_clear_shot.png
