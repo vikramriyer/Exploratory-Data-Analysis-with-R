@@ -10,45 +10,46 @@ knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
 ```
 
 #Familiarize with data
+
+###Objective 
+
+To analyze all the chemical properties of the red wine and determine which factors might be resposible for good quality red wine.
+
+###Introduction
+
+Looking at the variables in the dataset, there are some really interesting questions that can be answered.
+
+- Does high content of alcohol increase the quality of red wine?
+- Does high content of sugar make the red wine more tasty and hence result in higher quality product?
+
+Let's explore the data and find out answers to above questions as well as pictographically understand the data. 
+We will be plotting graphs, identifying the outliers and drawing some inferences about data by looking at the various plots(historgrams, scatterplots, bar plots, etc)
+
 ```{r}
 # Load data
-wine <- read.csv('/data/myhome/vikram-code-school/ND/P4/datasets/wineQualityReds.csv')
+df <- read.csv('/data/myhome/vikram-code-school/ND/P4/datasets/wineQualityReds.csv')
 
 #import required packages
 library(ggplot2)
 library(gridExtra)
 library(GGally)
-names(wine)
-```
-
-```{r}
-summary(wine)
-```
-
-```{r}
-head(wine)
-```
-
-```{r}
-dim(wine)
-```
-
-```{r}
-str(wine)
 ```
 
 #Univariate Analysis
 
 ```{r}
-#The variable 'X' in the dataframe is just the index and we wont be using it throughout the exploration, let's get rid of it.
-wine$X <- NULL
+# The variable 'X' in the dataframe is just the index and we wont be using it throughout the exploration, let's drop it.
+wine <- subset(df, select = -c(X))
 
-# Let's see how quality of a wine is measured
-levels(wine$quality)
+# Column 'X' dropped
+names(wine)
+```
 
-# Let's convert the quality to factor
+```{r, echo=TRUE}
+# Convert quality to factor
 wine$quality.as_factor <- factor(wine$quality)
 
+# Prepare data (quality) for categorization
 levels(wine$quality.as_factor)
 ```
 
@@ -105,19 +106,21 @@ grid.arrange(p5, p6, p7, p8, ncol = 2)
 grid.arrange(p9, p10, p11, p12, ncol = 2)
 ```
 
-####Variables having normal and not having normal distributions
-```{r}
-####################################################
-#        Normal         |       Not Normal         #
-####################################################
-# 1. alcohol            | citric.acid              #
-# 2. fixed.acidity      | residual.sugar           #
-# 3. volatile.acidity   | chlorides                #
-# 4. density            | free.sulphur.dioxide     #
-# 5. pH                 | total.sulphur.dioxide    #
-#                       | sulphates                #
-####################################################
-```
+Categorizing distributions of the Variables
+
+- Normal
+    - alcohol
+    - fixed.acidity
+    - volatile.acidity
+    - density
+    - pH
+- Non Normal (skewed, uniform, etc)
+    - citric.acid
+    - residual.sugar
+    - chlorides
+    - free.sulphur.dioxide
+    - total.sulphur.dioxide
+    - sulphates
 
 ####So, we need to transform the variables which do not look normal or close to. We can use the log10
 ```{r}
@@ -146,11 +149,12 @@ grid.arrange(t1, t2, t3, t4, t5, ncol = 2)
 ```
 
 ####Let's further classify quality of wine into 3 ordinal variables: low(3,4), medium(5,6), best(7,8)
-```{r}
+```{r, echo=TRUE}
 low <- wine$quality <= 4
 medium <- wine$quality > 4 & wine$quality < 7
 best <- wine$quality > 6
-wine$quality.category <- factor(ifelse(low, 'low', ifelse(medium, 'medium', 'best')), 
+wine$quality.category <- factor(ifelse(low, 'low', 
+                                ifelse(medium, 'medium', 'best')), 
                                 levels = c("low", "medium", "best"))
 levels(wine$quality.category)
 ```
@@ -202,11 +206,8 @@ my_fn <- function(data, mapping, method = 'lm'){
   plot
 }
 
-ggpairs(wine, title = 'bivariate red wine analysis', 
-        lower = list(continuous = my_fn))
 ```
-####Now, the above figure is not very clear. Howerver. I have attached a screenshot by using the rbasic app which gave a clearer picture of the same above pic
-####You can view it here: https://github.com/vikramriyer/Exploratory-Data-Analysis-with-R/blob/master/rstudio_ggpairs_clear_shot.png
+
 ####*Conclusions*: Some variables which should be checked for corelations are plotted below: (some samples)
 ####Criteria for picking the variables for futher analysis, the corelation coefficient > 0.5 or coefficient < -0.5
 
