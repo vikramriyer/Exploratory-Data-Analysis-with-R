@@ -160,9 +160,28 @@ levels(wine$quality.category)
 ```
 
 #BiVariate Analysis
+
+We can use the ggpairs function to find the level of corelation between the variables so that ones with very less relevance can be skipped
+
+```{r  fig.width=16, fig.height=16 }
+
+#about the function
+my_fn <- function(data, mapping, method = 'lm'){
+  plot <- ggplot(data = data, mapping = mapping) +
+  geom_point() +
+  geom_smooth(method = method)
+  plot
+}
+
+ggpairs(wine, c('fixed.acidity', 'volatile.acidity', 'citric.acid',
+                'residual.sugar', 'chlorides', 'free.sulfur.dioxide',
+                'total.sulfur.dioxide', 'density', 'pH', 'sulphates',
+                'alcohol', 'quality'), title = 'bivariate red wine analysis',
+                lower = list(continuous = my_fn))
+```
+
 ####Comparing each of the attributes/compounds of wine with quality and coming to conclusions
 ```{r}
-names(wine)
 ggplot(aes(x = quality.category, y = alcohol), data = wine) +
   geom_boxplot()
 ## higher the content of alcohol, better the quality
@@ -196,16 +215,6 @@ grid.arrange(b5, b6, b7, ncol = 2)
 ```
 
 ####*Conclusion*: The above factors denote that, they are inversely proportional to quality of red wine, i.e. lower the factor, better the quality
-
-####Let's try to find a overview of all the variables using the ggpairs function
-```{r  fig.width=16, fig.height=16 }
-my_fn <- function(data, mapping, method = 'lm'){
-  plot <- ggplot(data = data, mapping = mapping) +
-  geom_point() +
-  geom_smooth(method = method)
-  plot
-}
-
 ```
 
 ####*Conclusions*: Some variables which should be checked for corelations are plotted below: (some samples)
