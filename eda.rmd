@@ -11,16 +11,13 @@ knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
 
 #Familiarize with data
 
-###Objective 
-
+*Objective*   
 To analyze all the chemical properties of the red wine and determine which factors might be resposible for good quality red wine.
 
-###Introduction
-
-Looking at the variables in the dataset, there are some really interesting questions that can be answered.
-
-- Does high content of alcohol increase the quality of red wine?
-- Does high content of sugar make the red wine more tasty and hence result in higher quality product?
+*Introduction*   
+Looking at the variables in the dataset, there are some really interesting questions that can be answered.   
+- Does high content of alcohol increase the quality of red wine?   
+- Does high content of sugar make the red wine more tasty and hence result in higher quality product?   
 
 Let's explore the data and find out answers to above questions as well as pictographically understand the data. 
 We will be plotting graphs, identifying the outliers and drawing some inferences about data by looking at the various plots(historgrams, scatterplots, bar plots, etc)
@@ -106,40 +103,35 @@ grid.arrange(p5, p6, p7, p8, ncol = 2)
 grid.arrange(p9, p10, p11, p12, ncol = 2)
 ```
 
-Categorizing distributions of the Variables
+*Categorizing distributions of the Variables*   
+Normal|Non-normal
+------|----------
+alcohol | citric.acid
+fixed.alcohol | residual.sugar
+volatile.acidity | free.sulphur.dioxide
+density | total.sulphur.dioxide
+pH | sulphates
+--   | chlorides
 
-- Normal
-    - alcohol
-    - fixed.acidity
-    - volatile.acidity
-    - density
-    - pH
-- Non Normal (skewed, uniform, etc)
-    - citric.acid
-    - residual.sugar
-    - chlorides
-    - free.sulphur.dioxide
-    - total.sulphur.dioxide
-    - sulphates
+> So, we need to transform the variables which do not look normal or close to. We can use the log10
 
-####So, we need to transform the variables which do not look normal or close to. We can use the log10
 ```{r}
 t1 <- ggplot(aes(x = sulphates), data = wine) +
-  geom_histogram(stat = 'count', color = 'black', fill = 'grey') +
+  geom_histogram(stat = 'bin', color = 'black', fill = 'grey') +
   scale_x_log10()
 
 t2 <- ggplot(aes(x = total.sulfur.dioxide), data = wine) +
   scale_x_continuous(limits = c(0,170), breaks = seq(0,170,5)) +
-  geom_histogram(stat = 'count', color = 'black', fill = 'grey') +
+  geom_histogram(stat = 'bin', color = 'black', fill = 'grey') +
   scale_x_log10()
 
 t3 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) +
-  geom_histogram(stat = 'count', color = 'black', fill = 'grey') +
+  geom_histogram(stat = 'bin', color = 'black', fill = 'grey') +
   scale_x_log10()
 
 t4 <- ggplot(aes(x = chlorides), data = wine) +
   scale_x_continuous(limits = c(0,0.2), breaks = seq(0,0.2,0.01)) +
-  geom_histogram(stat = 'count', color = 'black', fill = 'grey') +
+  geom_histogram(stat = 'bin', color = 'black', fill = 'grey') +
   scale_x_log10()
 
 t5 <- ggplot(aes(x = residual.sugar), data = wine) +
@@ -148,7 +140,8 @@ t5 <- ggplot(aes(x = residual.sugar), data = wine) +
 grid.arrange(t1, t2, t3, t4, t5, ncol = 2)
 ```
 
-####Let's further classify quality of wine into 3 ordinal variables: low(3,4), medium(5,6), best(7,8)
+*Let's further classify quality of wine into 3 ordinal variables: low(3,4), medium(5,6), best(7,8)*
+
 ```{r, echo=TRUE}
 low <- wine$quality <= 4
 medium <- wine$quality > 4 & wine$quality < 7
@@ -161,7 +154,7 @@ levels(wine$quality.category)
 
 #BiVariate Analysis
 
-We can use the ggpairs function to find the level of corelation between the variables so that ones with very less relevance can be skipped
+*We can use the ggpairs function to find the level of corelation between the variables so that ones with very less relevance can be skipped*
 
 ```{r  fig.width=16, fig.height=16 }
 
@@ -173,21 +166,19 @@ my_fn <- function(data, mapping, method = 'lm'){
   plot
 }
 
-ggpairs(wine, c('fixed.acidity', 'volatile.acidity', 'citric.acid',
-                'residual.sugar', 'chlorides', 'free.sulfur.dioxide',
-                'total.sulfur.dioxide', 'density', 'pH', 'sulphates',
-                'alcohol', 'quality'), title = 'bivariate red wine analysis',
-                lower = list(continuous = my_fn))
+
 ```
 
-####Comparing each of the attributes/compounds of wine with quality and coming to conclusions
+*Comparing each of the attributes/compounds of wine with quality and coming to conclusions*
+
 ```{r}
 ggplot(aes(x = quality.category, y = alcohol), data = wine) +
   geom_boxplot()
 ## higher the content of alcohol, better the quality
 ```
 
-####Let's draw plots for all variables against quality of red wine and analyze which variable has a relation(positive, negative, no relation) with quality of red wine
+*Let's draw plots for all variables against quality of red wine and analyze which variable has a relation(positive, negative, no relation) with quality of red wine*
+
 ```{r}
 names(wine)
 b1 <- ggplot(aes(x = quality.category, y = alcohol), data = wine) +
@@ -201,9 +192,10 @@ b4 <- ggplot(aes(x = quality.category, y = fixed.acidity), data = wine) +
 grid.arrange(b1, b2, b3, b4, ncol = 2)
 ```
 
-####*Conclusion*: The above factors depict that, they are directly proportional to quality of red wine, i.e. higher the factor, better the quality
+> Conclusion: The above factors depict that, they are directly proportional to quality of red wine, i.e. higher the factor, better the quality
 
-####Let's check the remaining ones
+*Let's check the remaining ones*
+
 ```{r}
 b5 <- ggplot(aes(x = quality.category, y = pH), data = wine) +
   geom_boxplot(fill="red")
@@ -214,14 +206,13 @@ b7 <- ggplot(aes(x = quality.category, y = volatile.acidity), data = wine) +
 grid.arrange(b5, b6, b7, ncol = 2)
 ```
 
-####*Conclusion*: The above factors denote that, they are inversely proportional to quality of red wine, i.e. lower the factor, better the quality
-```
+> Conclusion: The above factors denote that, they are inversely proportional to quality of red wine, i.e. lower the factor, better the quality
 
-####*Conclusions*: Some variables which should be checked for corelations are plotted below: (some samples)
-####Criteria for picking the variables for futher analysis, the corelation coefficient > 0.5 or coefficient < -0.5
 
+> Criteria for picking the variables for futher analysis, the corelation coefficient > 0.5 or coefficient < -0.5
 
 #Final plots (Multivariate Analysis)
+
 ```{r}
 # fixed.acidity vs density
 ggplot(aes(x = fixed.acidity, y = density), data = wine) +
@@ -230,23 +221,28 @@ ggplot(aes(x = fixed.acidity, y = density), data = wine) +
   ggtitle('fixed.acidity vs density') +
   theme(plot.title = element_text(face="bold"))
 ```
-####The above plot clearly shows that, there is a positive corelation between density and fixed.acidity in determining the quality of wine
+
+> The above plot clearly signifies that, there is a positive corelation between density and fixed.acidity in determining the quality of wine
 
 ```{r}
 # fixed.acidity with pH
 ggplot(aes(x = fixed.acidity, y = pH), data = wine) +
-  geom_point(aes(color = quality.category)) +
+  geom_point(aes(color = quality.category), alpha = 0.3) +
   geom_smooth(method = 'lm', color = 'red') +
   ggtitle('fixed.acidity vs pH') +
   theme(plot.title = element_text(face="bold"))
 ```
-####The above plot denotes that, higher the pH and lower the fixed.acidity, better the quality of wine
-####*Note*: It should also be noted that, the pH value is mostly in the range of 3 to 4
 
-```{r}
+> The above plot denotes that, higher the pH and lower the fixed.acidity, better the quality of wine
+
+*Note*: It should also be noted that, the pH value is mostly in the range of 3 to 4
+
+```{r, echo=TRUE}
+# Let's run the below chunk of code to find how much percent does the value in range 3-4 for pH contribute to in the dataset
 paste(round(length(wine$pH[wine$pH < 4 & wine$pH > 3])/length(wine$pH)*100), '%')
 ```
-####So, out of the total 1599 observations, approximately 98% observations have pH value in the range 3-4
+
+> So, out of the total 1599 observations, approximately 98% observations have pH value in the range 3-4
 
 ```{r}
 # fixed.acidity with citric.acid
@@ -256,7 +252,8 @@ ggplot(aes(x = fixed.acidity, y = citric.acid), data = wine) +
   ggtitle('fixed.acidity vs citric.acid') +
   theme(plot.title = element_text(face="bold"))
 ```
-####Let's just verify if the above plot is uniform across all the levels of quality since I can see a lot of red dots below the corelation slope
+
+*Let's just verify if the above plot is uniform across all the levels of quality since I can see a lot of red dots below the corelation slope*
 
 ```{r}
 ggplot(aes(x = fixed.acidity, y = citric.acid), data = wine) +
@@ -266,7 +263,8 @@ ggplot(aes(x = fixed.acidity, y = citric.acid), data = wine) +
   ggtitle('fixed.acidity vs citric.acid faceted by quality') +
   theme(plot.title = element_text(face="bold"))
 ```
-####As we can see above the slope in the initial plot was correct and the relation is positive, i.e. for higher values of citric acid and fixed acidity, the perceived quality of wine is better
+
+> As we can see above the slope in the initial plot was correct and the relation is positive, i.e. for higher values of citric acid and fixed acidity, the perceived quality of wine is better
 
 ```{r}
 # density with alcohol
@@ -279,10 +277,9 @@ ggplot(aes(x = alcohol,y = density), data=wine)+
 ```
 
 #Reflection
-####While I was plotting the graphs, I had to check each data field with every other one. This dataset was fairly small; however, when dealing with large datasets, not even a single aspect should be missed i.e. considering each and every case and analysis about them. Using the methods done above, there is a lot of manual work. To reduce this manual work, we should be depending more on robust machine learning models for prediction about various permutations and combinations of dataset.
+While I was plotting the graphs, I had to check each data field with every other one. This dataset was fairly small; however, when dealing with large datasets, not even a single aspect should be missed i.e. considering each and every case and analysis about them. Using the methods done above, there is a lot of manual work. To reduce this manual work, we should be depending more on robust machine learning models for prediction about various permutations and combinations of dataset.
 
-#Conclusion
-####EDA is perhaps the best tool to undestand the data and feel it. It is useful when you want to visualize data even before thinking of models and writing code. However, it may have some limitations since it depends on the collected data (i.e. sample) and hence more data may result in changes in the conclusion about the dependent and independent variables
+EDA is perhaps the best tool to undestand the data and feel it. It is useful when you want to visualize data even before thinking of models and writing code. However, it may have some limitations since it depends on the collected data (i.e. sample) and hence more data may result in changes in the conclusion about the dependent and independent variables
 
 #References:
 [Acids in Wine](https://en.wikipedia.org/wiki/Acids_in_wine)
