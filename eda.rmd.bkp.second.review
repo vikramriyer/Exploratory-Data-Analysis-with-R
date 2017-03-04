@@ -19,7 +19,7 @@ Looking at the variables in the dataset, there are some really interesting quest
 - Does high content of alcohol increase the quality of red wine?   
 - Does high content of sugar make the red wine more tasty and hence result in higher quality product?   
 
-Let's explore the data and find out answers to above questions as well as pictographically understand the data.    
+Let's explore the data and find out answers to above questions as well as pictographically understand the data. 
 We will be plotting graphs, identifying the outliers and drawing some inferences about data by looking at the various plots(historgrams, scatterplots, bar plots, etc)
 
 ```{r}
@@ -30,21 +30,7 @@ df <- read.csv('/data/myhome/vikram-code-school/ND/P4/datasets/wineQualityReds.c
 library(ggplot2)
 library(gridExtra)
 library(GGally)
-
-summary(df)
 ```
-
-```{r}
-length(df$citric.acid[df$citric.acid == 0])
-```
-
-**Observations from summary**:    
-
-* there is a huge difference between min and max values of free.sulphur.dioxide and total.sulphur.dioxide
-* the range of pH is in between 2.74 to 4.0
-* citric acid min value is found to be 0 and there are 132 such samples
-* quality of wine has range 3-8, we will categorize them into low(3,4), medium(5,6) and best(7,8) based on these values
-* X can be ignored as it seems to be an index
 
 #Univariate Analysis
 
@@ -102,105 +88,22 @@ p11 <- ggplot(aes(x = chlorides), data = wine) +
 
 p12 <- ggplot(aes(x = residual.sugar), data = wine) +
   geom_histogram(stat = 'count', color = 'black', fill = 'grey')
-```
 
-```{r, fig.width=8}
-p1
-```
-```{r}
-summary(wine$quality.as_factor)
-```
-
-
-```{r, fig.width=8}
-p2
 ```
 
 ```{r}
-summary(wine$citric.acid)
-```
-
-```{r, fig.width=8}
-p3
+grid.arrange(p1, p2, p3, p4, ncol = 2)
 ```
 
 ```{r}
-summary(wine$alcohol)
-```
-
-```{r, fig.width=8}
-p4
+grid.arrange(p5, p6, p7, p8, ncol = 2)
 ```
 
 ```{r}
-summary(wine$sulphates)
+grid.arrange(p9, p10, p11, p12, ncol = 2)
 ```
 
-```{r, fig.width=8}
-p5
-```
-
-```{r}
-summary(wine$fixed.acidity)
-```
-
-```{r, fig.width=8}
-p6
-```
-
-```{r}
-summary(wine$density)
-```
-
-```{r, fig.width=8}
-p7
-```
-
-```{r}
-summary(wine$pH)
-```
-
-```{r, fig.width=8}
-p8
-```
-
-```{r}
-summary(wine$total.sulfur.dioxide)
-```
-
-```{r, fig.width=8}
-p9
-```
-
-```{r}
-summary(wine$volatile.acidity)
-```
-
-```{r, fig.width=8}
-p10
-```
-
-```{r}
-summary(wine$free.sulfur.dioxide)
-```
-
-```{r, fig.width=8}
-p11
-```
-
-```{r}
-summary(wine$chlorides)
-```
-
-```{r, fig.width=8}
-p12
-```
-
-```{r}
-summary(wine$residual.sugar)
-```
-
-**Summarizing the above findings in terms of distributions in a single table below**
+*Categorizing distributions of the Variables*     
 
 Normal|Non-normal
 ------|----------
@@ -213,26 +116,27 @@ pH | sulphates
 
 > So, we need to transform the variables which do not look normal or close to. We can use the log10
 
-```{r, fig.width=12}
+```{r}
 t1 <- ggplot(aes(x = sulphates), data = wine) +
   geom_histogram(stat = 'bin', color = 'black', fill = 'grey') +
-  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x))
+  scale_x_log10()
 
 t2 <- ggplot(aes(x = total.sulfur.dioxide), data = wine) +
+  scale_x_continuous(limits = c(0,170), breaks = seq(0,170,5)) +
   geom_histogram(stat = 'bin', color = 'black', fill = 'grey') +
-  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x))
+  scale_x_log10()
 
 t3 <- ggplot(aes(x = free.sulfur.dioxide), data = wine) +
   geom_histogram(stat = 'bin', color = 'black', fill = 'grey') +
-  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x))
+  scale_x_log10()
 
 t4 <- ggplot(aes(x = chlorides), data = wine) +
+  scale_x_continuous(limits = c(0,0.2), breaks = seq(0,0.2,0.01)) +
   geom_histogram(stat = 'bin', color = 'black', fill = 'grey') +
-  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x))
+  scale_x_log10()
 
 t5 <- ggplot(aes(x = residual.sugar), data = wine) +
-  geom_histogram(stat = 'bin', color = 'black', fill = 'grey') +
-  scale_x_log10(breaks = scales::trans_breaks("log10", function(x) 10^x))
+  geom_histogram(stat = 'count', color = 'black', fill = 'grey')
 
 grid.arrange(t1, t2, t3, t4, t5, ncol = 2)
 ```
@@ -327,18 +231,13 @@ pl2 <- ggplot(aes(x = alcohol, y = volatile.acidity), data = subset(wine, (wine$
 pl3 <- ggplot(aes(x = sulphates, y = volatile.acidity), data = subset(wine, (wine$quality.category == 'low' | wine$quality.category == 'best'))) +
   geom_point(aes(color = subset_of_wine))
 
-pl4 <- ggplot(aes(x = fixed.acidity, y = pH), data = subset(wine, (wine$quality.category == 'low' | wine$quality.category == 'best'))) +
-  geom_point(aes(color = subset_of_wine))
-
-grid.arrange(pl1, pl2, pl3, pl4, ncol = 2)
+grid.arrange(pl1, pl2, pl3, ncol = 2)
 
 ```
 
 > The scatterplot for alcohol and sulphates shows that, low quality samples are in bottom left corner and best quality are in the top right mostly; which means the chemical composition of these two compound can be relied on for quality of the wine
 
 > volatile.acidity is used here as a bait to confirm that, alcohol and sulphates are compounds that increase the quality of wine. A better looking detailed plot is shown in the final plots section.
-
-> fixed.acidity and pH plot shows that, lower right corner, having higher fixed.acidity and lower pH makes the best of wine. More emphasis will be added in final plots section
 
 > Criteria for picking the variables for futher analysis, the corelation coefficient > 0.5 or coefficient < -0.5
 
@@ -394,14 +293,24 @@ ggplot(aes(x = alcohol,y = density), data=wine)+
 
 Let's look at some plots that I find interesting
 
-```{r, fig.height=7, fig.width=8}
+```{r fig.width=16, fig.height=16}
+# fixed.acidity vs density
+ggplot(aes(x = fixed.acidity, y = density, color = quality.category), data = wine) +
+  geom_point(aes(size = quality.category)) +
+  scale_color_brewer(type = 'div', palette="Set1") +
+  geom_smooth(method = 'lm', color = 'red') +
+  ggtitle('fixed.acidity vs density') +
+  theme(plot.title = element_text(face="bold"))
+```
+
+> The above plot clearly signifies that, there is a positive corelation between density and fixed.acidity in determining the quality of wine
+
+```{r, fig.height=8, fig.width=8}
 # fixed.acidity with pH
 ggplot(aes(x = fixed.acidity, y = pH), data = wine) +
-  geom_point(aes(color = quality.category), alpha = 0.35) +
+  geom_point(aes(color = quality.category), alpha = 0.7) +
   geom_smooth(method = 'lm', color = 'red') +
   ggtitle('fixed.acidity vs pH') +
-  xlab("pH") +
-  ylab("fixed.acidity (g/dm^3)") +
   theme(plot.title = element_text(face="bold"))
 ```
 
@@ -416,47 +325,38 @@ paste(round(length(wine$pH[wine$pH < 4 & wine$pH > 3])/length(wine$pH)*100), '%'
 
 > So, out of the total 1599 observations, approximately 98% observations have pH value in the range 3-4
 
+```{r fig.width=12, fig.height=12}
+# fixed.acidity vs alcohol
+ggplot(aes(x = fixed.acidity, y = alcohol, color = quality.category), data = wine) +
+  geom_point(aes(size = quality.category)) +
+  scale_color_brewer(type = 'div', palette="Set1") +
+  geom_smooth(method = 'lm', color = 'red') +
+  ggtitle('fixed.acidity vs alcohol') +
+  theme(plot.title = element_text(face="bold"))
+```
+
 *The ggpairs plot also mentions sulphates to have a positive corelation with quality, however, it is also evident that, its relation with no other variable is fairly visible. Let us plot it one of the variables that it has some corelation with i.e. alcohol*
 
-```{r, fig.height=7, fig.width=8}
+```{r}
 # alcohol vs sulphates
-ggplot(aes(x = sulphates, y = alcohol),data = wine) + 
-        geom_point(aes(color = quality.category), alpha = .35) +
+ggplot(aes(x = sulphates, y = alcohol, color = quality.category),data = wine) + 
+        geom_point(aes(size = quality.category)) +
         ggtitle("alcohol vs sulphates") +
-        xlab("Sulphates (g/dm^3)") +
-        ylab("Alcohol (%by volume)") +
+        xlab("Sulphates") +
+        ylab("Alcohol (%))") +
         coord_cartesian(ylim = c(8, 14))
 ```
 
 > The above plotting proves that, alcohol and sulphates are one of the major contributors in increasing the quality of wine as discussed before
 
-```{r, fig.height=7, fig.width=8}
-# alcohol vs volatile.acidity
-ggplot(aes(x = volatile.acidity, y = alcohol, color = quality.category),data = wine) + 
-        geom_point(aes(color = quality.category), alpha = 0.35) +
-        geom_smooth(method = 'lm', color = 'red') +
-        ggtitle("alcohol vs volatile.acidity") +
-        xlab("volatile acidity (g/dm^3)") +
-        ylab("Alcohol (% by volume)")
-```
-
-> Best quality wines are produced with lower amounts of volatile.acidity and higher amounts of alcohol
-
-> Overall, after observing all the drawn plots, we could see that, alcohol and sulphates have shown to increase quality of wine whereas pH and volatile.acidity decrease the quality
-
-#Reflection   
+#Reflection
 The dataset that we just analyzed was fairly small and hence this cannot be a perfect solution to determine the quality of red wine. Another point that we can consider is that the quality measure that was given here must have been done by some experts which may vary depending on the region (geographical) the experts are from. In short, the information about experts is abstracted from us and hence the results obtained through plots should not be considered as accurate. 
-
-I also emphasize on use of a learning algorithm as it will be faster and in case another subset of data is added, will be able to corelate better than we visually determining w.r.t to each dependent and independent variables. Some problems that I faced was analyzing almost all the variables one by one and discarding them in case nothing was very much clear and evident. A programming model could be best suited in this senario where we would set a factor that would determine if a combination of variables be included for further analysis. We could always feed in new factors and various combinations of factors as well.
-An basic example can be:    
-- Include only those variables which are forming a coreltion of more than 0.4 or less than -0.4 with quality
-- Then we can add, also include if the variable is corelated to another variable from the set
-- Try the same algorithm by excluding medium range (5-6) quality measure, i.e. only for low and high and check if corelation coefficient changes
-There could be more but these are the simplest of examples that can be thought about
 
 On the analysis front, prediction is another vast tool that can be used to get some more insights and for that again we may have to train algorithms on huge datasets without missing out on points like info about experts (geography, age, sex, etc) along with some other factors that may determine the quality like smell, texture of the color (bright. pale, etc).
 
 EDA is perhaps the best tool to undestand the data and feel it. It is useful when you want to visualize data even before thinking of models and writing code. However, it may have some limitations since it depends on the collected data (i.e. sample).
+
+I also emphasize on use of a learning algorithm as it will be faster and in case another subset of data is added, will be able to corelate better than we visually determining w.r.t to each dependent and independent variables.
 
 #References:
 [Acids in Wine](https://en.wikipedia.org/wiki/Acids_in_wine)
